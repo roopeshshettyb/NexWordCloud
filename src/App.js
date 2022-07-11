@@ -1,6 +1,6 @@
-import './App.css';
 import React, { useEffect, useRef, useState } from "react";
 import { Link, Button } from "@mui/material";
+import { useLocation } from "react-router-dom";
 
 // try {
 //   const Wordcloud = require("wordcloud");
@@ -9,56 +9,14 @@ import { Link, Button } from "@mui/material";
 // }
 // for deployment use above code.
 
-const Wordcloud = require("wordcloud");
-
-const data = [
-  {
-    word: "python",
-    weight: 443,
-    click: [
-      {
-        label: "business",
-        link: "https://www.google.com"
-      },
-      {
-        label: "finance",
-        link: "https://www.yahoo.com"
-      },
-      {
-        label: "account",
-        link: "https://www.duckduckgo.com"
-      }
-    ]
-  },
-  {
-    word: "java",
-    weight: 426,
-    click: [
-      {
-        label: "business",
-        link: "https://www.google.com"
-      },
-      {
-        label: "finance",
-        link: "https://www.yahoo.com"
-      },
-      {
-        label: "account",
-        link: "https://www.duckduckgo.com"
-      }
-    ]
-  },
-  {
- 
-];
-
-const styles = {
-  fontFamily: "Raleway",
-  backgroundColor: "White"
-};
-
-export default function Cloud() {
+export default function Cloud({ prop }) {
   var canvasRef = useRef(null);
+  const Wordcloud = require("wordcloud");
+
+  const queryParams = new URLSearchParams(window.location.search)
+  const filename = queryParams.get("input") || "words"
+  const data = require("../public/" + filename + ".json").words;
+
   const [pop, setPop] = useState(false);
   const [number, setNumber] = useState(0);
   const [word, setWord] = useState("");
@@ -69,6 +27,15 @@ export default function Cloud() {
   const canvasHeight = 500;
   const canvasWidth = 1500;
   //edit canvasWidth to make the cloud bigger/smaller
+
+
+  const styles = {
+    fontFamily: "Raleway",
+    backgroundColor: "White",
+    hoverBg: "rgba(0, 0, 0, 0.881)",
+    linkColor: "red",
+    caption: "This is a Programming Language cloud"
+  };
 
   function popup(item, event) {
     try {
@@ -132,8 +99,9 @@ export default function Cloud() {
       shape: "circle",
       minRotation: -1.57,
       maxRotation: 1.57,
-      fontFamily: styles.fontFamily,
-      backgroundColor: styles.backgroundColor,
+      shuffle: false,
+      fontFamily: styles.fontFamily || "Raleway",
+      backgroundColor: styles.backgroundColor || "White",
       color: (size, weight) => {
         if (weight >= minWeight && weight < medianOne) {
           return "rgba(0,0,0,0.6)";
@@ -147,7 +115,6 @@ export default function Cloud() {
       rotationSteps: 2,
       weightFactor: function (size, item) {
         let biggest = final_data[0][0].length;
-        console.log(biggest);
         let max = 443;
         if (biggest <= 7) {
           if (size == max) {
@@ -221,7 +188,7 @@ export default function Cloud() {
             left: props.x,
             position: "absolute",
             zIndex: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.881)",
+            backgroundColor: styles.hoverBg || "black",
             color: "white",
             cursor: "pointer",
             color: "white",
@@ -242,14 +209,38 @@ export default function Cloud() {
           {word &&
             word[2].map((link, idx) => (
               <div key={idx} style={{ padding: "5px" }}>
-                <Link href={link.link} target="_blank">
+                <Link
+                  href={link.link}
+                  target="_blank"
+                  underline="hover"
+                  style={{ color: styles.linkColor || "blue" }}
+                >
                   {link.label}
                 </Link>
               </div>
             ))}
         </div>
       </div>
+      {styles.caption && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            fontFamily: "Raleway",
+            fontSize: "40"
+          }}
+        >
+          <h2
+            style={{
+              fontFamily: "Raleway",
+              fontSize: "50",
+              color: "blue"
+            }}
+          >
+            {styles.caption}
+          </h2>
+        </div>
+      )}
     </div>
   );
 }
-
