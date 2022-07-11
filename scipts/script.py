@@ -14,7 +14,6 @@ a=0;
 b=0;
 
 header=database_rows[0];
-print(header);
 
 for i in range(0,len(header)):
     if(header[i].lower()=="body"):
