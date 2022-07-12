@@ -1,21 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, Button, withTheme } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { Link, Button } from "@mui/material";
 
-// try {
-//   const Wordcloud = require("wordcloud");
-// } catch (err) {
-//
-// }
+try {
+  const Wordcloud = require("wordcloud");
+} catch (err) {
+
+}
 // for deployment use above code.
 
 export default function Cloud({ prop }) {
   var canvasRef = useRef(null);
   const Wordcloud = require("wordcloud");
 
-  const queryParams = new URLSearchParams(window.location.search)
-  const filename = queryParams.get("input") || "words"
+  const queryParams = new URLSearchParams(window.location.search);
+  const filename = queryParams.get("input") || "words";
   const data = require("../public/" + filename + ".json").words;
+
 
   const [pop, setPop] = useState(false);
   const [number, setNumber] = useState(0);
@@ -24,35 +24,39 @@ export default function Cloud({ prop }) {
   const [max, setMax] = useState(0);
   const [count, setCount] = useState(data.length);
   const [maxWeight, setMaxWeight] = useState(0);
-  const [pointer, setPointer] = useState(false)
+  var timer = null
   const canvasHeight = 500;
   const canvasWidth = 1500;
   //edit canvasWidth to make the cloud bigger/smaller
-
 
   const styles = {
     fontFamily: "Raleway",
     backgroundColor: "White",
     hoverBg: "rgba(0, 0, 0, 0.881)",
     linkColor: "red",
-    caption: "This is a Programming Language cloud"
+    caption: "This is a Programming Language cloud",
+    hoverTimeout: "5000" //timeout in ms for popup
   };
 
   function popup(item, event) {
+    console.log(item, event);
     try {
       if (item !== undefined) {
         try {
-
+          clearTimeout(timer);
+          timer = (
+            setTimeout(() => {
+              setPop(false);
+            }, styles.hoverTimeout)
+          );
           setWord(item);
           setProps(event);
           setPop(true);
-          setTimeout(() => {
-            setPop(false);
-          }, 3000);
         } catch (err) {
           console.log(err);
         }
       } else {
+        clearTimeout(timer);
         setPop(false);
       }
     } catch (err) {
@@ -87,7 +91,7 @@ export default function Cloud({ prop }) {
   function randseed(s) {
     s = Math.sin(s) * 10000;
     return s - Math.floor(s);
-  };
+  }
   let seed = 0;
   Math.random = function () {
     seed++;
@@ -135,9 +139,9 @@ export default function Cloud({ prop }) {
       rotateRatio: 0.4,
       fontWeight: function (item, event, dimension) {
         if (pop) {
-          return "bold"
+          return "bold";
         }
-        return "normal"
+        return "normal";
       },
       weightFactor: function (size, item) {
         let biggest = final_data[0][0].length;
@@ -168,11 +172,12 @@ export default function Cloud({ prop }) {
       minSize: 3,
       drawOutOfBound: false,
       click: (item, dimension, event) => {
+        event.cancelBubble = true;
+        if (event.stopPropagation) event.stopPropagation();
         popup(item, event, dimension);
-      },
+      }
     });
   }, [maxWeight]);
-
   return (
     <div>
       <div
@@ -199,10 +204,23 @@ export default function Cloud({ prop }) {
 
       <div
         className="epic-word-cloud"
-        style={{ display: "flex", justifyContent: "center", margin: "10px", cursor: 'pointer' }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          margin: '10px',
+          cursor: "pointer"
+        }}
         onMouseLeave={() => {
           setPop(false);
+          setWord("")
         }}
+        onClick={() => {
+          if (pop == true && word !== '') {
+            setPop(false)
+            setWord('')
+          }
+        }}
+
       >
         <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
 
@@ -225,8 +243,7 @@ export default function Cloud({ prop }) {
             lineHeight: "20px",
             borderRadius: "15px",
             fontSize: "20px",
-            textAlign: "center",
-            fontFamily: styles.fontFamily || "Raleway",
+            textAlign: "center"
           }}
         >
           <div className="popHeading">
@@ -246,13 +263,12 @@ export default function Cloud({ prop }) {
               </div>
             ))}
         </div>
-
       </div>
       {styles.caption && (
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "center"
           }}
         >
           <h2
