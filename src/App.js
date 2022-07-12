@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, Button } from "@mui/material";
+import { Link, Button, withTheme } from "@mui/material";
 import { useLocation } from "react-router-dom";
 
 // try {
@@ -24,6 +24,7 @@ export default function Cloud({ prop }) {
   const [max, setMax] = useState(0);
   const [count, setCount] = useState(data.length);
   const [maxWeight, setMaxWeight] = useState(0);
+  const [pointer, setPointer] = useState(false)
   const canvasHeight = 500;
   const canvasWidth = 1500;
   //edit canvasWidth to make the cloud bigger/smaller
@@ -41,6 +42,7 @@ export default function Cloud({ prop }) {
     try {
       if (item !== undefined) {
         try {
+
           setWord(item);
           setProps(event);
           setPop(true);
@@ -81,11 +83,22 @@ export default function Cloud({ prop }) {
     return res;
   }
 
+  // Overwrite Math.random to use seed to ensure same word cloud is printed on every render
+  function randseed(s) {
+    s = Math.sin(s) * 10000;
+    return s - Math.floor(s);
+  };
+  let seed = 0;
+  Math.random = function () {
+    seed++;
+    return randseed(seed);
+  };
+
   useEffect(() => {
     let final_data = [];
     setCount(count);
     data.forEach((w) => {
-      final_data.push([w.word, w.weight, w.click]);
+      final_data.push([w.word, w.weight, w.click, w.color]);
     });
     data.sort((a, b) => a["weight"] - b["weight"]);
     setMaxWeight(Math.max(...data.map((w) => w.weight)));
@@ -94,6 +107,7 @@ export default function Cloud({ prop }) {
     let medianOne = median(data.slice(0, Math.floor((2 * count) / 3)));
     let medianTwo = median(data.slice(Math.floor(count / 3), count));
     setMax(final_data.length);
+    var listColorCounter = 0;
     Wordcloud(canvasRef.current, {
       list: final_data.slice(0, count),
       shape: "circle",
@@ -103,19 +117,31 @@ export default function Cloud({ prop }) {
       fontFamily: styles.fontFamily || "Raleway",
       backgroundColor: styles.backgroundColor || "White",
       color: (size, weight) => {
-        if (weight >= minWeight && weight < medianOne) {
-          return "rgba(0,0,0,0.6)";
-        } else if (weight < medianTwo && weight >= medianOne) {
-          return "rgba(0,0,0,0.8)";
-        } else if (weight <= maxWeight && weight >= medianTwo) {
-          return "rgba(0,0,0,1.0)";
+        if (final_data[listColorCounter][3] !== undefined) {
+          return final_data[listColorCounter++][3];
+        } else {
+          if (weight >= minWeight && weight < medianOne) {
+            return "rgba(0,0,0,0.6)";
+          } else if (weight < medianTwo && weight >= medianOne) {
+            return "rgba(0,0,0,0.8)";
+          } else if (weight <= maxWeight && weight >= medianTwo) {
+            return "rgba(0,0,0,1.0)";
+          }
         }
+
         return "black";
       },
       rotationSteps: 2,
+      rotateRatio: 0.4,
+      fontWeight: function (item, event, dimension) {
+        if (pop) {
+          return "bold"
+        }
+        return "normal"
+      },
       weightFactor: function (size, item) {
         let biggest = final_data[0][0].length;
-        let max = 443;
+        let max = maxWeight;
         if (biggest <= 7) {
           if (size == max) {
             return (Math.pow(size, 0.95) * (canvasWidth / 2)) / 1024;
@@ -138,13 +164,12 @@ export default function Cloud({ prop }) {
           return (Math.pow(size, 0.65) * (canvasWidth / 2)) / 1024;
         }
       },
-      shrinkToFit: false,
-      minSize: 5,
+      shrinkToFit: true,
+      minSize: 3,
       drawOutOfBound: false,
-      ellipticity: 0.65,
       click: (item, dimension, event) => {
         popup(item, event, dimension);
-      }
+      },
     });
   }, [maxWeight]);
 
@@ -174,7 +199,7 @@ export default function Cloud({ prop }) {
 
       <div
         className="epic-word-cloud"
-        style={{ display: "flex", justifyContent: "center", margin: "10px" }}
+        style={{ display: "flex", justifyContent: "center", margin: "10px", cursor: 'pointer' }}
         onMouseLeave={() => {
           setPop(false);
         }}
@@ -200,7 +225,8 @@ export default function Cloud({ prop }) {
             lineHeight: "20px",
             borderRadius: "15px",
             fontSize: "20px",
-            textAlign: "center"
+            textAlign: "center",
+            fontFamily: styles.fontFamily || "Raleway",
           }}
         >
           <div className="popHeading">
@@ -220,21 +246,20 @@ export default function Cloud({ prop }) {
               </div>
             ))}
         </div>
+
       </div>
       {styles.caption && (
         <div
           style={{
             display: "flex",
             justifyContent: "center",
-            fontFamily: "Raleway",
-            fontSize: "40"
           }}
         >
           <h2
             style={{
-              fontFamily: "Raleway",
+              fontFamily: styles.fontFamily || "Raleway",
               fontSize: "50",
-              color: "blue"
+              color: styles.captionColor || "blue"
             }}
           >
             {styles.caption}
