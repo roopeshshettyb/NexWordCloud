@@ -7,7 +7,7 @@ try {
 }
 // for deployment use above code.
 
-export default function Cloud() {
+export default function App() {
   var canvasRef = useRef(null);
   var thumbnailCanvasRef = useRef(null);
   const Wordcloud = require("wordcloud");
@@ -54,7 +54,7 @@ export default function Cloud() {
   };
 
   function popup(item, event) {
-    console.log(item, event);
+    console.log(event);
     try {
       if (item !== undefined) {
         try {
@@ -251,10 +251,9 @@ export default function Cloud() {
           <div
             hidden={!pop}
             style={{
-              top: props.y,
-              left: props.x,
+              top: 0.5 * (props.screenY),
+              left: props.screenX,
               position: "absolute",
-              zIndex: 1,
               backgroundColor: styles.hoverBg || "black",
               color: "white",
               cursor: "pointer",

@@ -15,7 +15,7 @@ export default function Cloud({ prop }) {
 
     const queryParams = new URLSearchParams(window.location.search);
     const filename = queryParams.get("input") || "words";
-    const data = require("../public/" + filename + ".json").words;
+    const data = require("../../public/" + filename + ".json").words;
 
 
     const [pop, setPop] = useState(false);
