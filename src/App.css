@@ -43,6 +43,11 @@
 
 /* */
 
+#popuphover  {
+
+  transition: height 0.3s;
+}
 #popup:hover {
   background-color: rgba(0,0,0,0.1);
+
 }

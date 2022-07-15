@@ -16,32 +16,43 @@ export default function App() {
   const queryParams = new URLSearchParams(window.location.search);
   const filename = queryParams.get("input") || "words";
   const data = require("../public/" + filename + ".json").words;
-
+  // const data = require("../public/words.json").words;
   const [pop, setPop] = useState(false);
   const [number, setNumber] = useState(data.length);
   const [word, setWord] = useState("");
   const [props, setProps] = useState([]);
   const [max, setMax] = useState(data.length);
+  const [element, setElement] = useState("hello")
 
   const [maxWeight, setMaxWeight] = useState(0);
   const [open, setOpen] = useState(false);
   var timer = null
   const canvasHeight = 500;
   const canvasWidth = 800;
-  const thumbnailCanvasHeight = 50; //50
-  const thumbnailCanvasWidth = 100; //100
+
   //edit canvasWidth to make the cloud bigger/smaller
 
   const styles = {
-    thumbnail: true,
     fontFamily: "Raleway",
     backgroundColor: "White",
-    hoverBg: "white",
-    hoverTextColor: 'black',
-    hoverLinkColor: "blue",
     caption: "This is a Programming Language cloud",
     captionSize: "10",
-    hoverTimeout: "5000", //timeout in ms for popup
+    thumbnail: {
+      display: false,
+      height: 50,
+      width: 100,
+    },
+    popup: {
+      displayWord: true,
+      displayCount: true,
+      backgroundColor: "white",
+      fontColor: 'black',
+      linkColor: 'black',
+      fontSize: '22px',
+      width: '250px',
+
+      padding: { paddingTop: '8px', paddingLeft: '30px', paddingBottom: '8px', paddingRight: '30px' },
+    },
     box: {
       position: 'absolute',
       top: '50%',
@@ -60,13 +71,14 @@ export default function App() {
     try {
       if (item !== undefined) {
         try {
-          clearTimeout(timer);
-          timer = (
-            setTimeout(() => {
-              setPop(false);
-            }, styles.hoverTimeout)
-          );
+          // clearTimeout(timer);
+          // timer = (
+          //   setTimeout(() => {
+          //     setPop(false);
+          //   }, styles.hoverTimeout)
+          // );
           setWord(item);
+          setElement(item[0])
           setProps(event);
           setPop(true);
         } catch (err) {
@@ -192,7 +204,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (styles.thumbnail == false) {
+    if (styles.thumbnail.display == false) {
       generateCloud(number)
     } else {
       data.sort((a, b) => b["weight"] - a["weight"]);
@@ -229,9 +241,9 @@ export default function App() {
 
   return (
     <div>
-      <div style={{ padding: '0px', marginLeft: '20px', display: 'flex', justifyContent: 'left' }}>
-        {styles.thumbnail && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud(number) }} ref={thumbnailCanvasRef} width={thumbnailCanvasWidth} height={thumbnailCanvasHeight} />}
-        <div style={{ margin: "10px", color: "black" }}        >
+      <div style={{ padding: '300px', marginLeft: '20px', display: 'flex', justifyContent: 'center' }}>
+        {styles.thumbnail.display && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud(number) }} ref={thumbnailCanvasRef} width={styles.thumbnail.width} height={styles.thumbnail.height} />}
+        {/* <div style={{ margin: "10px", color: "black" }}    >
           <input
             type="number"
             onChange={(e) => setNumber(e.target.value)}
@@ -239,14 +251,14 @@ export default function App() {
             placeholder="Enter Number of Words"
           />
           {"  "}Maximum : {max}
-          {!styles.thumbnail && <Button
+          {!styles.thumbnail.display && <Button
             variant="contained"
             onClick={handleSubmit}
             style={{ marginLeft: "10px", maxHeight: '22px', maxWidth: '40px' }}
           >
             Submit
           </Button>}
-        </div>
+        </div> */}
       </div>
       <Box hidden={!open} sx={styles.box}>
         <div
@@ -261,7 +273,7 @@ export default function App() {
             }
           }}
         >
-          <IconButton
+          {styles.thumbnail.display && <IconButton
             aria-label="close"
             onClick={() => setOpen(false)}
             sx={{
@@ -272,39 +284,52 @@ export default function App() {
             }}
           >
             <CloseIcon />
-          </IconButton>
+          </IconButton>}
           <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
-          <Box
+          <Box id="popuphover"
             hidden={!pop} sx={{
               top: props.offsetY,
               left: props.offsetX,
               position: "absolute",
-              minWidth: "100px",
+              minWidth: styles.popup.width,
               zIndex: 1,
-              fontSize: '20px',
-              backgroundColor: styles.hoverBg || "black",
-              color: styles.hoverTextColor || "black",
-              transform: 'translate(19%,10%)',
+              fontSize: styles.popup.fontSize,
+              fontFamily: styles.fontFamily || "Raleway",
+              backgroundColor: styles.popup.backgroundColor || "black",
+              color: styles.popup.fontColor || "black",
+              transform: 'translate(7%,10%)',
               boxShadow: 24,
-              p: 1,
+              transitionTimingFunction: "ease",
+              transition: "height 0.3s",
+              py: 1.5,
+            }}
+            onMouseLeave={() => {
+              setPop(false);
+              setWord("")
             }}
           >
-            <div id='popup' style={{ paddingBottom: '5px' }} >
-              {word[0]}
-            </div>
-            <div id='popup' style={{ borderBottom: '1px solid grey' }}>
-              {word[1]}
-            </div>
+            {styles.popup.displayWord && <div id='popup' style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
+              {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
+            </div>}
+            {styles.popup.displayCount && <div id='popup' style={styles.popup.padding}>
+              Count: {word[1]}
+            </div>}
+            {styles.popup.displayWord && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
+            </div>}
+            {styles.popup.displayWord && <div style={{ padding: '5px' }}>
+            </div>}
             {word &&
               word[2].map((link, idx) => (
-                <div id='popup' key={idx} style={{ paddingTop: '5px' }}>
+                <div id='popup' key={idx} >
                   <Link
                     href={link.link}
                     target="_blank"
-                    underline="hover"
-                    style={{ color: styles.hoverLinkColor || "blue" }}
+                    underline="none"
+                    style={{ color: styles.popup.linkColor || "blue", }}
                   >
-                    {link.label}
+                    <div id='popup' key={idx} style={styles.popup.padding}>
+                      {link.label.charAt(0).toUpperCase() + link.label.slice(1, link.label.length)}
+                    </div>
                   </Link>
                 </div>
               ))}
