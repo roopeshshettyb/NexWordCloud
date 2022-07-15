@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, Box, Button, IconButton } from "@mui/material";
+import { Link, Box, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 try {
-  const Wordcloud = require("wordcloud");
+  // const Wordcloud = require("wordcloud");
 } catch (err) {
 
 }
@@ -15,13 +15,12 @@ export default function App() {
 
   const queryParams = new URLSearchParams(window.location.search);
   const filename = queryParams.get("input") || "words";
-  const data = require("../public/" + filename + ".json").words;
+  const file = require("../public/" + filename + ".json")
+  const data = file.words;
   // const data = require("../public/words.json").words;
   const [pop, setPop] = useState(false);
-  const [number, setNumber] = useState(data.length);
   const [word, setWord] = useState("");
   const [props, setProps] = useState([]);
-  const [max, setMax] = useState(data.length);
   const [element, setElement] = useState("hello")
 
   const [maxWeight, setMaxWeight] = useState(0);
@@ -32,51 +31,12 @@ export default function App() {
 
   //edit canvasWidth to make the cloud bigger/smaller
 
-  const styles = {
-    fontFamily: "Raleway",
-    backgroundColor: "White",
-    caption: "This is a Programming Language cloud",
-    captionSize: "10",
-    thumbnail: {
-      display: false,
-      height: 50,
-      width: 100,
-    },
-    popup: {
-      displayWord: true,
-      displayCount: true,
-      backgroundColor: "white",
-      fontColor: 'black',
-      linkColor: 'black',
-      fontSize: '22px',
-      width: '250px',
-
-      padding: { paddingTop: '8px', paddingLeft: '30px', paddingBottom: '8px', paddingRight: '30px' },
-    },
-    box: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: canvasWidth,
-      height: canvasHeight + 100,
-      bgcolor: 'background.paper',
-      boxShadow: 24,
-      p: 1,
-    }
-  };
+  const styles = file.style
 
   function popup(item, event) {
-    console.log(event);
     try {
       if (item !== undefined) {
         try {
-          // clearTimeout(timer);
-          // timer = (
-          //   setTimeout(() => {
-          //     setPop(false);
-          //   }, styles.hoverTimeout)
-          // );
           setWord(item);
           setElement(item[0])
           setProps(event);
@@ -105,19 +65,6 @@ export default function App() {
     return randseed(seed);
   };
 
-  const handleSubmit = () => {
-    try {
-      if (number < data.length) {
-        setNumber(number)
-        setMaxWeight(0);
-      } else {
-        //
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   function median(arr) {
     arr.sort((a, b) => a["weight"] - b["weight"]);
     let mid = arr.length >> 1;
@@ -128,12 +75,12 @@ export default function App() {
     return res;
   }
 
-  function generateCloud(n) {
+  function generateCloud() {
     setOpen(true)
-    let count = n
     let final_data = [];
+    let count = data.length
     data.forEach((w) => {
-      final_data.push([w.word, w.weight, w.click, w.color]);
+      final_data.push([w.word, w.weight, w.click, w.color, w.weight]);
     });
     data.sort((a, b) => a["weight"] - b["weight"]);
     setMaxWeight(Math.max(...data.map((w) => w.weight)));
@@ -141,10 +88,9 @@ export default function App() {
     let minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
     let medianOne = median(data.slice(0, Math.floor((2 * count) / 3)));
     let medianTwo = median(data.slice(Math.floor(count / 3), count));
-    setMax(final_data.length);
     var listColorCounter = 0;
     Wordcloud(canvasRef.current, {
-      list: final_data.slice(0, count),
+      list: final_data,
       shape: "circle",
       minRotation: -1.57,
       maxRotation: 1.57,
@@ -170,26 +116,28 @@ export default function App() {
       weightFactor: function (size, item) {
         let biggest = final_data[0][0].length;
         let max = maxWeight;
+        let factor = 1
+        if (maxWeight < 100) factor = 40
         if (biggest <= 7) {
           if (size === max) {
-            return (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;
+            return factor / 1.3 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;
           }
-          return (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
         } else if (biggest > 7 && biggest <= 10) {
           if (size === max) {
-            return (Math.pow(size, 0.85) * (3 * (canvasWidth - 200) / 2)) / 1024;
+            return factor / 1.3 * (Math.pow(size, 0.85) * (3 * (canvasWidth - 200) / 2)) / 1024;
           }
-          return (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
         } else if (biggest > 10 && biggest <= 13) {
           if (size === max) {
-            return (Math.pow(size, 0.8) * (3 * (canvasWidth - 200) / 2)) / 1024;
+            return factor / 1.3 * (Math.pow(size, 0.8) * (3 * (canvasWidth - 200) / 2)) / 1024;
           }
-          return (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
         } else if (biggest > 13) {
           if (size === max) {
-            return (Math.pow(size, 0.75) * (4 * (canvasWidth - 200) / 2)) / 1024;
+            return factor / 1.3 * (Math.pow(size, 0.75) * (4 * (canvasWidth - 200) / 2)) / 1024;
           }
-          return (Math.pow(size, 0.70) * (4 * (canvasWidth - 300) / 2)) / 1024;
+          return factor / 1.2 * (Math.pow(size, 0.70) * (4 * (canvasWidth - 300) / 2)) / 1024;
         }
       },
       shrinkToFit: true,
@@ -204,8 +152,8 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (styles.thumbnail.display == false) {
-      generateCloud(number)
+    if (styles.thumbnail.display === false) {
+      generateCloud()
     } else {
       data.sort((a, b) => b["weight"] - a["weight"]);
       let thumbnailArray = []
@@ -228,7 +176,7 @@ export default function App() {
           return "bold";
         },
         weightFactor: function (size, item) {
-          if (size == maxWeight) return (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+          if (size === maxWeight) return (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
           return (Math.pow(size, 0.60) * (3 * (canvasWidth - 300) / 2)) / 1024;
         },
         shrinkToFit: true,
@@ -237,7 +185,7 @@ export default function App() {
       });
     }
 
-  }, [maxWeight]);
+  }, [maxWeight]);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
@@ -285,7 +233,7 @@ export default function App() {
                 {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
               </div>}
               {styles.popup.displayCount && <div id='popup' style={styles.popup.padding}>
-                Count: {word[1]}
+                Count: {word[4]}
               </div>}
               {styles.popup.displayWord && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
               </div>}
@@ -327,23 +275,7 @@ export default function App() {
         </div>
       }
       <div style={{ padding: '300px', marginLeft: '20px', display: 'flex', justifyContent: 'center' }}>
-        {styles.thumbnail.display && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud(number) }} ref={thumbnailCanvasRef} width={styles.thumbnail.width} height={styles.thumbnail.height} />}
-        {/* <div style={{ margin: "10px", color: "black" }}    >
-          <input
-            type="number"
-            onChange={(e) => setNumber(e.target.value)}
-            style={{ margin: "10px auto", maxWidth: '155px' }}
-            placeholder="Enter Number of Words"
-          />
-          {"  "}Maximum : {max}
-          {!styles.thumbnail.display && <Button
-            variant="contained"
-            onClick={handleSubmit}
-            style={{ marginLeft: "10px", maxHeight: '22px', maxWidth: '40px' }}
-          >
-            Submit
-          </Button>}
-        </div> */}
+        {styles.thumbnail.display && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud() }} ref={thumbnailCanvasRef} width={styles.thumbnail.width} height={styles.thumbnail.height} />}
       </div>
       {styles.thumbnail.display && <Box hidden={!open} sx={styles.box}>
         <div
