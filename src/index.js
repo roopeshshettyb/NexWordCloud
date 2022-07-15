@@ -2,6 +2,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from "./App";
 import Cloud from "./components/cloud";
+import './App.css'
 
 
 export default function Home() {

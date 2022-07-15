@@ -41,22 +41,8 @@
   font-family: sans-serif;
 }
 
-/* for word cloud */
+/* */
 
-.epic-word-cloud {
-
-  padding-top: 0px;
-  padding-bottom: 100px;
-  /* width: 700px;
-  height: 700px; */
+#popup:hover {
+  background-color: rgba(0,0,0,0.1);
 }
-
-.popHeading {
-  font-size: 25px;
-  margin-top: 10px;
-  margin-bottom: 5px;
-  
-}
-
-/* for modal */
-

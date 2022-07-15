@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, Box } from "@mui/material";
+import { Link, Box, Button, IconButton } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 try {
   const Wordcloud = require("wordcloud");
 } catch (err) {
@@ -20,37 +21,38 @@ export default function App() {
   const [number, setNumber] = useState(data.length);
   const [word, setWord] = useState("");
   const [props, setProps] = useState([]);
-  const [max, setMax] = useState(0);
+  const [max, setMax] = useState(data.length);
 
   const [maxWeight, setMaxWeight] = useState(0);
   const [open, setOpen] = useState(false);
   var timer = null
   const canvasHeight = 500;
   const canvasWidth = 800;
-  const thumbnailCanvasHeight = 50;
-  const thumbnailCanvasWidth = 100;
+  const thumbnailCanvasHeight = 50; //50
+  const thumbnailCanvasWidth = 100; //100
   //edit canvasWidth to make the cloud bigger/smaller
 
   const styles = {
+    thumbnail: true,
     fontFamily: "Raleway",
     backgroundColor: "White",
-    hoverBg: "rgba(0, 0, 0, 0.881)",
-    linkColor: "red",
+    hoverBg: "white",
+    hoverTextColor: 'black',
+    hoverLinkColor: "blue",
     caption: "This is a Programming Language cloud",
-    hoverTimeout: "5000" //timeout in ms for popup
-  };
-
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: canvasWidth,
-    height: canvasHeight + 100,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+    captionSize: "10",
+    hoverTimeout: "5000", //timeout in ms for popup
+    box: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: canvasWidth,
+      height: canvasHeight + 100,
+      bgcolor: 'background.paper',
+      boxShadow: 24,
+      p: 1,
+    }
   };
 
   function popup(item, event) {
@@ -94,7 +96,7 @@ export default function App() {
   const handleSubmit = () => {
     try {
       if (number < data.length) {
-        // setCount(number);
+        setNumber(number)
         setMaxWeight(0);
       } else {
         //
@@ -149,7 +151,6 @@ export default function App() {
             return "rgba(0,0,0,1.0)";
           }
         }
-
         return "black";
       },
       rotationSteps: 2,
@@ -191,50 +192,63 @@ export default function App() {
   }
 
   useEffect(() => {
+    if (styles.thumbnail == false) {
+      generateCloud(number)
+    } else {
+      data.sort((a, b) => b["weight"] - a["weight"]);
+      let thumbnailArray = []
+      data.forEach(obj => {
+        thumbnailArray.push([obj.word, obj.weight])
+      })
+      setMaxWeight(data[0].weight);
+      Wordcloud(thumbnailCanvasRef.current, {
+        list: thumbnailArray,
+        shape: "rectangle",
+        shuffle: false,
+        rotateRatio: 0,
+        fontFamily: styles.fontFamily || "Raleway",
+        backgroundColor: styles.backgroundColor || "White",
+        color: (size, weight) => {
+          return "black";
+        },
+        rotationSteps: 0,
+        fontWeight: function (item, event, dimension) {
+          return "bold";
+        },
+        weightFactor: function (size, item) {
+          if (size == maxWeight) return (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+          return (Math.pow(size, 0.60) * (3 * (canvasWidth - 300) / 2)) / 1024;
+        },
+        shrinkToFit: true,
+        minSize: 3,
+        drawOutOfBound: false,
+      });
+    }
 
-    data.sort((a, b) => b["weight"] - a["weight"]);
-    let thumbnailArray = [[data[0].word, data[0].weight]]
-    setMaxWeight(data[0].weight);
-    Wordcloud(thumbnailCanvasRef.current, {
-      list: thumbnailArray,
-      shape: "rectangle",
-      shuffle: false,
-      rotateRatio: 0,
-      fontFamily: styles.fontFamily || "Raleway",
-      backgroundColor: styles.backgroundColor || "White",
-      color: (size, weight) => {
-        return "black";
-      },
-      rotationSteps: 0,
-      fontWeight: function (item, event, dimension) {
-        return "bold";
-      },
-      shrinkToFit: true,
-      minSize: 3,
-      drawOutOfBound: false,
-    });
   }, [maxWeight]);
+
   return (
     <div>
       <div style={{ padding: '0px', marginLeft: '20px', display: 'flex', justifyContent: 'left' }}>
-        <canvas onClick={() => { open ? setOpen(false) : generateCloud(number) }} ref={thumbnailCanvasRef} width={thumbnailCanvasWidth} height={thumbnailCanvasHeight} />
-        <div
-          style={{ margin: "10px" }}
-        >
-          <div style={{ color: "black" }}>
-
-            <input
-              type="number"
-              onChange={(e) => setNumber(e.target.value)}
-              style={{ margin: "10px auto" }}
-              placeholder="Enter Number of Words"
-            />
-            {"  "}Maximum : {max}
-          </div>
+        {styles.thumbnail && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud(number) }} ref={thumbnailCanvasRef} width={thumbnailCanvasWidth} height={thumbnailCanvasHeight} />}
+        <div style={{ margin: "10px", color: "black" }}        >
+          <input
+            type="number"
+            onChange={(e) => setNumber(e.target.value)}
+            style={{ margin: "10px auto", maxWidth: '155px' }}
+            placeholder="Enter Number of Words"
+          />
+          {"  "}Maximum : {max}
+          {!styles.thumbnail && <Button
+            variant="contained"
+            onClick={handleSubmit}
+            style={{ marginLeft: "10px", maxHeight: '22px', maxWidth: '40px' }}
+          >
+            Submit
+          </Button>}
         </div>
       </div>
-      <Box hidden={!open} sx={style}>
-
+      <Box hidden={!open} sx={styles.box}>
         <div
           onMouseLeave={() => {
             setPop(false);
@@ -247,44 +261,54 @@ export default function App() {
             }
           }}
         >
-          <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
-          <div
-            hidden={!pop}
-            style={{
-              top: 0.5 * (props.screenY),
-              left: props.screenX,
-              position: "absolute",
-              backgroundColor: styles.hoverBg || "black",
-              color: "white",
-              cursor: "pointer",
-              minWidth: "200px",
-              minHeight: "100px",
-              maxWidth: "400px",
-              maxHeight: "400px",
-              padding: "5px",
-              lineHeight: "20px",
-              borderRadius: "15px",
-              fontSize: "20px",
-              textAlign: "center"
+          <IconButton
+            aria-label="close"
+            onClick={() => setOpen(false)}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
             }}
           >
-            <div className="popHeading">
-              {word[0]}: {word[1]}
+            <CloseIcon />
+          </IconButton>
+          <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
+          <Box
+            hidden={!pop} sx={{
+              top: props.offsetY,
+              left: props.offsetX,
+              position: "absolute",
+              minWidth: "100px",
+              zIndex: 1,
+              fontSize: '20px',
+              backgroundColor: styles.hoverBg || "black",
+              color: styles.hoverTextColor || "black",
+              transform: 'translate(19%,10%)',
+              boxShadow: 24,
+              p: 1,
+            }}
+          >
+            <div id='popup' style={{ paddingBottom: '5px' }} >
+              {word[0]}
+            </div>
+            <div id='popup' style={{ borderBottom: '1px solid grey' }}>
+              {word[1]}
             </div>
             {word &&
               word[2].map((link, idx) => (
-                <div key={idx} style={{ padding: "5px" }}>
+                <div id='popup' key={idx} style={{ paddingTop: '5px' }}>
                   <Link
                     href={link.link}
                     target="_blank"
                     underline="hover"
-                    style={{ color: styles.linkColor || "blue" }}
+                    style={{ color: styles.hoverLinkColor || "blue" }}
                   >
                     {link.label}
                   </Link>
                 </div>
               ))}
-          </div>
+          </Box>
         </div>
         {styles.caption && (
           <div
@@ -292,8 +316,9 @@ export default function App() {
             <h2
               style={{
                 fontFamily: styles.fontFamily || "Raleway",
-                fontSize: "50",
-                color: styles.captionColor || "blue"
+                color: styles.captionColor || "blue",
+                display: 'flex',
+                justifyContent: 'center'
               }}
             >
               {styles.caption}
