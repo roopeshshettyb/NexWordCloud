@@ -241,6 +241,91 @@ export default function App() {
 
   return (
     <div>
+      {!styles.thumbnail.display &&
+        <div>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center'
+          }}
+            onMouseLeave={() => {
+              setPop(false);
+              setWord("")
+            }}
+            onClick={() => {
+              if (pop === true && word !== '') {
+                setPop(false)
+                setWord('')
+              }
+            }}
+          >
+            <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
+            <Box id="popuphover"
+              hidden={!pop} sx={{
+                top: props.y,
+                left: props.x,
+                position: "absolute",
+                minWidth: styles.popup.width,
+                zIndex: 1,
+                fontSize: styles.popup.fontSize,
+                fontFamily: styles.fontFamily || "Raleway",
+                backgroundColor: styles.popup.backgroundColor || "black",
+                color: styles.popup.fontColor || "black",
+                transform: 'translate(7%,10%)',
+                boxShadow: 24,
+                transitionTimingFunction: "ease",
+                transition: "height 0.3s",
+                py: 1.5,
+              }}
+              onMouseLeave={() => {
+                setPop(false);
+                setWord("")
+              }}
+            >
+              {styles.popup.displayWord && <div id='popup' style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
+                {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
+              </div>}
+              {styles.popup.displayCount && <div id='popup' style={styles.popup.padding}>
+                Count: {word[1]}
+              </div>}
+              {styles.popup.displayWord && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
+              </div>}
+              {styles.popup.displayWord && <div style={{ padding: '5px' }}>
+              </div>}
+              {word &&
+                word[2].map((link, idx) => (
+                  <div id='popup' key={idx} >
+                    <Link
+                      href={link.link}
+                      target="_blank"
+                      underline="none"
+                      style={{ color: styles.popup.linkColor || "blue", }}
+                    >
+                      <div id='popup' key={idx} style={styles.popup.padding}>
+                        {link.label.charAt(0).toUpperCase() + link.label.slice(1, link.label.length)}
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+            </Box>
+
+          </div>
+          {styles.caption && (
+            <div
+            >
+              <h2
+                style={{
+                  fontFamily: styles.fontFamily || "Raleway",
+                  color: styles.captionColor || "blue",
+                  display: 'flex',
+                  justifyContent: 'center'
+                }}
+              >
+                {styles.caption}
+              </h2>
+            </div>
+          )}
+        </div>
+      }
       <div style={{ padding: '300px', marginLeft: '20px', display: 'flex', justifyContent: 'center' }}>
         {styles.thumbnail.display && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud(number) }} ref={thumbnailCanvasRef} width={styles.thumbnail.width} height={styles.thumbnail.height} />}
         {/* <div style={{ margin: "10px", color: "black" }}    >
@@ -260,7 +345,7 @@ export default function App() {
           </Button>}
         </div> */}
       </div>
-      <Box hidden={!open} sx={styles.box}>
+      {styles.thumbnail.display && <Box hidden={!open} sx={styles.box}>
         <div
           onMouseLeave={() => {
             setPop(false);
@@ -273,7 +358,7 @@ export default function App() {
             }
           }}
         >
-          {styles.thumbnail.display && <IconButton
+          <IconButton
             aria-label="close"
             onClick={() => setOpen(false)}
             sx={{
@@ -284,7 +369,7 @@ export default function App() {
             }}
           >
             <CloseIcon />
-          </IconButton>}
+          </IconButton>
           <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
           <Box id="popuphover"
             hidden={!pop} sx={{
@@ -350,7 +435,8 @@ export default function App() {
             </h2>
           </div>
         )}
-      </Box>
+      </Box>}
+
     </div>
   );
 }
