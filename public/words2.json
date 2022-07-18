@@ -1,0 +1,305 @@
+{
+    "style": {
+        "fontFamily": "Raleway",
+        "backgroundColor": "White",
+        "caption": "This is a Programming Language cloud",
+        "captionSize": "10",
+        "thumbnail": {
+            "display": true,
+            "height": 70,
+            "width": 100
+        },
+        "popup": {
+            "displayWord": true,
+            "displayCount": true,
+            "backgroundColor": "white",
+            "fontColor": "black",
+            "linkColor": "black",
+            "fontSize": "22px",
+            "width": "250px",
+            "padding": {
+                "paddingTop": "8px",
+                "paddingLeft": "30px",
+                "paddingBottom": "8px",
+                "paddingRight": "30px"
+            }
+        },
+        "box": {
+            "position": "absolute",
+            "top": "50%",
+            "left": "50%",
+            "transform": "translate(-50%, -50%)",
+            "width": 800,
+            "height": 600,
+            "bgcolor": "background.paper",
+            "boxShadow": 24,
+            "p": 1
+        }
+    },
+    "words": [
+        {
+            "word": "java",
+            "weight": 13,
+            "click": [
+                {
+                    "label": "programming",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "programming language",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "python",
+            "weight": 10,
+            "click": [
+                {
+                    "label": "programming",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "language",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "internet",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "nodejs",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "programming language of the world wide web",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "programming language of the world wide web",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "programming language of the world wide web",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "programming language of the world wide web",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "programming language of the world wide web",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "programming language of the world wide web",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "programming language of the world wide web",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "programming language of the world wide web",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "programming language of the world wide web",
+                    "link": "https://www.google.com"
+                }
+            ]
+        },
+        {
+            "word": "reactjs",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "let",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "def",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "xyz",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "nextjs",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                },
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                },
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "nosql",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "mysql",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "mongodb",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "spring",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "boot",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "c++",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        },
+        {
+            "word": "perl",
+            "weight": 1,
+            "click": [
+                {
+                    "label": "business",
+                    "link": "https://www.google.com"
+                },
+                {
+                    "label": "finance",
+                    "link": "https://www.yahoo.com"
+                },
+                {
+                    "label": "account",
+                    "link": "https://www.duckduckgo.com"
+                }
+            ]
+        }
+    ]
+}

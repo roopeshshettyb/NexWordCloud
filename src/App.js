@@ -152,6 +152,7 @@ export default function App() {
   }
 
   useEffect(() => {
+
     if (styles.thumbnail.display === false) {
       generateCloud()
     } else {
@@ -162,8 +163,8 @@ export default function App() {
       })
       setMaxWeight(data[0].weight);
       Wordcloud(thumbnailCanvasRef.current, {
-        list: thumbnailArray,
-        shape: "rectangle",
+        list: thumbnailArray.slice(0, 7),
+        shape: "circle",
         shuffle: false,
         rotateRatio: 0,
         fontFamily: styles.fontFamily || "Raleway",
@@ -176,8 +177,8 @@ export default function App() {
           return "bold";
         },
         weightFactor: function (size, item) {
-          if (size === maxWeight) return (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
-          return (Math.pow(size, 0.60) * (3 * (canvasWidth - 300) / 2)) / 1024;
+          if (size === maxWeight) return 10 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+          return 10 * (Math.pow(size, 0.60) * (3 * (canvasWidth - 300) / 2)) / 1024;
         },
         shrinkToFit: true,
         minSize: 3,
@@ -229,10 +230,10 @@ export default function App() {
                 setWord("")
               }}
             >
-              {styles.popup.displayWord && <div id='popup' style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
+              {styles.popup.displayWord && <div style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
                 {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
               </div>}
-              {styles.popup.displayCount && <div id='popup' style={styles.popup.padding}>
+              {styles.popup.displayCount && <div style={styles.popup.padding}>
                 Count: {word[4]}
               </div>}
               {styles.popup.displayWord && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
