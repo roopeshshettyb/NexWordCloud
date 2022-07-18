@@ -5,7 +5,7 @@
         "caption": "This is a Programming Language cloud",
         "captionSize": "10",
         "thumbnail": {
-            "display": true,
+            "display": false,
             "height": 70,
             "width": 100
         },

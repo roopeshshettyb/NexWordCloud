@@ -17,21 +17,24 @@ export default function App() {
   const filename = queryParams.get("input") || "words";
   const file = require("../public/" + filename + ".json")
   const data = file.words;
+  const styles = file.style
   // const data = require("../public/words.json").words;
   const [pop, setPop] = useState(false);
   const [word, setWord] = useState("");
   const [props, setProps] = useState([]);
   const [element, setElement] = useState("hello")
-
+  var thumbnailDisplay = styles.thumbnail.display
   const [maxWeight, setMaxWeight] = useState(0);
   const [open, setOpen] = useState(false);
   var timer = null
   const canvasHeight = 500;
   const canvasWidth = 800;
-
   //edit canvasWidth to make the cloud bigger/smaller
 
-  const styles = file.style
+  if (queryParams.get('thumbnail') !== null) {
+    let myBool = (queryParams.get('thumbnail') === 'true');
+    thumbnailDisplay = myBool
+  }
 
   function popup(item, event) {
     try {
@@ -152,8 +155,7 @@ export default function App() {
   }
 
   useEffect(() => {
-
-    if (styles.thumbnail.display === false) {
+    if (thumbnailDisplay === false) {
       generateCloud()
     } else {
       data.sort((a, b) => b["weight"] - a["weight"]);
@@ -190,7 +192,7 @@ export default function App() {
 
   return (
     <div>
-      {!styles.thumbnail.display &&
+      {!thumbnailDisplay &&
         <div>
           <div style={{
             display: 'flex',
@@ -276,9 +278,9 @@ export default function App() {
         </div>
       }
       <div style={{ padding: '300px', marginLeft: '20px', display: 'flex', justifyContent: 'center' }}>
-        {styles.thumbnail.display && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud() }} ref={thumbnailCanvasRef} width={styles.thumbnail.width} height={styles.thumbnail.height} />}
+        {thumbnailDisplay && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud() }} ref={thumbnailCanvasRef} width={styles.thumbnail.width} height={styles.thumbnail.height} />}
       </div>
-      {styles.thumbnail.display && <Box hidden={!open} sx={styles.box}>
+      {thumbnailDisplay && <Box hidden={!open} sx={styles.box}>
         <div
           onMouseLeave={() => {
             setPop(false);
