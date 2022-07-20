@@ -12,9 +12,13 @@ The NexWordCloud uses [wordcloud2.js](https://github.com/timdream/wordcloud2.js)
     - Clone the Repo
     - npm install
 
-# Options
+## Options
 
     - A query parameter 'input' can be passed in the url which contains the file name of the json file which is located in ./public folder.
 
     - A query parameter 'thumbnail' can be passed in the url which can define if the thumbnail should be displayed or not.
+
+    - Cloud width and height can be edited in the json to suit your use case.
+
+    - A weight factor can also be edited in the json to increase/reduce the size of the words.
 

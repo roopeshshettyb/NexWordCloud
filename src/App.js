@@ -27,8 +27,8 @@ export default function App() {
   const [maxWeight, setMaxWeight] = useState(0);
   const [open, setOpen] = useState(false);
   var timer = null
-  const canvasHeight = 500;
-  const canvasWidth = 800;
+  const canvasHeight = styles.cloudHeight;
+  const canvasWidth = styles.cloudWidth;
   //edit canvasWidth to make the cloud bigger/smaller
 
   if (queryParams.get('thumbnail') !== null) {
@@ -119,13 +119,12 @@ export default function App() {
       weightFactor: function (size, item) {
         let biggest = final_data[0][0].length;
         let max = maxWeight;
-        let factor = 1
-        if (maxWeight < 100) factor = 40
+        let factor = styles.weightFactor
         if (biggest <= 7) {
           if (size === max) {
             return factor / 1.3 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;
           }
-          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+          return factor / 1.15 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
         } else if (biggest > 7 && biggest <= 10) {
           if (size === max) {
             return factor / 1.3 * (Math.pow(size, 0.85) * (3 * (canvasWidth - 200) / 2)) / 1024;
@@ -153,41 +152,86 @@ export default function App() {
       }
     });
   }
+  function generateThumbnail() {
+    let final_data = [];
+    let count = data.length
+    data.forEach((w) => {
+      final_data.push([w.word, w.weight, w.click, w.color, w.weight]);
+    });
+    data.sort((a, b) => a["weight"] - b["weight"]);
+    setMaxWeight(Math.max(...data.map((w) => w.weight)));
+    data.sort((a, b) => b["weight"] - a["weight"]);
+    let minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
+    let medianOne = median(data.slice(0, Math.floor((2 * count) / 3)));
+    let medianTwo = median(data.slice(Math.floor(count / 3), count));
+    var listColorCounter = 0;
+    Wordcloud(thumbnailCanvasRef.current, {
+      list: final_data,
+      shape: "circle",
+      minRotation: -1.57,
+      maxRotation: 1.57,
+      shuffle: false,
+      fontFamily: styles.fontFamily || "Raleway",
+      backgroundColor: styles.backgroundColor || "White",
+      color: (size, weight, item, b, c, d) => {
+        if (final_data[listColorCounter][3] !== undefined) {
+          return final_data[listColorCounter++][3];
+        } else {
+          weight = d[2]
+          if (weight >= minWeight && weight < medianOne) {
+            return "rgba(0,0,0,0.6)";
+          } else if (weight < medianTwo && weight >= medianOne) {
+            return "rgba(0,0,0,0.8)";
+          } else if (weight <= maxWeight && weight >= medianTwo) {
+            return "rgba(0,0,0,1.0)";
+          }
+        }
+        return "black";
+      },
+      rotationSteps: 2,
+      rotateRatio: 0.4,
+      fontWeight: function (item, event, dimension) {
+        return "bold";
+      },
+      weightFactor: function (size, item) {
+        let biggest = final_data[0][0].length;
+        let max = maxWeight;
+        let factor = 1
+        if (maxWeight < 100) factor = 40
+        if (biggest <= 7) {
+          if (size === max) {
+            return factor / 1.31 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;
+          }
+          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+        } else if (biggest > 7 && biggest <= 10) {
+          if (size === max) {
+            return factor / 1.3 * (Math.pow(size, 0.85) * (3 * (canvasWidth - 200) / 2)) / 1024;
+          }
+          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+        } else if (biggest > 10 && biggest <= 13) {
+          if (size === max) {
+            return factor / 1.3 * (Math.pow(size, 0.8) * (3 * (canvasWidth - 200) / 2)) / 1024;
+          }
+          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+        } else if (biggest > 13) {
+          if (size === max) {
+            return factor / 1.3 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 200) / 2)) / 1024;
+          }
+          return factor / 1.2 * (Math.pow(size, 0.70) * (1.5 * (canvasWidth - 300) / 2)) / 1024;
+        }
+      },
+      shrinkToFit: true,
+      minSize: 3,
+      drawOutOfBound: false,
+    });
+  }
 
   useEffect(() => {
     if (thumbnailDisplay === false) {
       generateCloud()
     } else {
-      data.sort((a, b) => b["weight"] - a["weight"]);
-      let thumbnailArray = []
-      data.forEach(obj => {
-        thumbnailArray.push([obj.word, obj.weight])
-      })
-      setMaxWeight(data[0].weight);
-      Wordcloud(thumbnailCanvasRef.current, {
-        list: thumbnailArray.slice(0, 7),
-        shape: "circle",
-        shuffle: false,
-        rotateRatio: 0,
-        fontFamily: styles.fontFamily || "Raleway",
-        backgroundColor: styles.backgroundColor || "White",
-        color: (size, weight) => {
-          return "black";
-        },
-        rotationSteps: 0,
-        fontWeight: function (item, event, dimension) {
-          return "bold";
-        },
-        weightFactor: function (size, item) {
-          if (size === maxWeight) return 10 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
-          return 10 * (Math.pow(size, 0.60) * (3 * (canvasWidth - 300) / 2)) / 1024;
-        },
-        shrinkToFit: true,
-        minSize: 3,
-        drawOutOfBound: false,
-      });
+      generateThumbnail()
     }
-
   }, [maxWeight]);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -277,11 +321,11 @@ export default function App() {
           )}
         </div>
       }
-      <div style={{ padding: '300px', marginLeft: '20px', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translate(-50%,50%' }}>
         {thumbnailDisplay && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud() }} ref={thumbnailCanvasRef} width={styles.thumbnail.width} height={styles.thumbnail.height} />}
       </div>
       {thumbnailDisplay && <Box hidden={!open} sx={styles.box}>
-        <div
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           onMouseLeave={() => {
             setPop(false);
             setWord("")

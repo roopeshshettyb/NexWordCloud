@@ -4,10 +4,13 @@
         "backgroundColor": "White",
         "caption": "This is a Programming Language cloud",
         "captionSize": "10",
+        "cloudWidth": "900",
+        "cloudHeight": "600",
+        "weightFactor": 40,
         "thumbnail": {
             "display": true,
-            "height": 70,
-            "width": 100
+            "height": 110,
+            "width": 200
         },
         "popup": {
             "displayWord": true,
@@ -29,8 +32,8 @@
             "top": "50%",
             "left": "50%",
             "transform": "translate(-50%, -50%)",
-            "width": 800,
-            "height": 600,
+            "minWidth": "70vw",
+            "minHeight": "90vh",
             "bgcolor": "background.paper",
             "boxShadow": 24,
             "p": 1
@@ -57,7 +60,7 @@
         },
         {
             "word": "python",
-            "weight": 10,
+            "weight": 7,
             "click": [
                 {
                     "label": "programming",
@@ -75,7 +78,7 @@
         },
         {
             "word": "nodejs",
-            "weight": 1,
+            "weight": 6,
             "click": [
                 {
                     "label": "programming language of the world wide web",
@@ -117,7 +120,7 @@
         },
         {
             "word": "reactjs",
-            "weight": 1,
+            "weight": 5,
             "click": [
                 {
                     "label": "let",
@@ -135,7 +138,7 @@
         },
         {
             "word": "nextjs",
-            "weight": 1,
+            "weight": 4,
             "click": [
                 {
                     "label": "business",
