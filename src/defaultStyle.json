@@ -1,0 +1,42 @@
+{
+    "style": {
+        "fontFamily": "Raleway",
+        "backgroundColor": "White",
+        "caption": "This is a Programming Language cloud",
+        "captionSize": "10",
+        "cloudWidth": "900",
+        "cloudHeight": "500",
+        "weightFactor": 10,
+        "thumbnail": {
+            "display": false,
+            "height": 110,
+            "width": 200
+        },
+        "popup": {
+            "displayWord": true,
+            "displayCount": true,
+            "backgroundColor": "white",
+            "fontColor": "black",
+            "linkColor": "black",
+            "fontSize": "22px",
+            "width": "250px",
+            "padding": {
+                "paddingTop": "8px",
+                "paddingLeft": "30px",
+                "paddingBottom": "8px",
+                "paddingRight": "30px"
+            }
+        },
+        "box": {
+            "position": "absolute",
+            "top": "50%",
+            "left": "50%",
+            "transform": "translate(-50%, -50%)",
+            "minWidth": "70vw",
+            "minHeight": "90vh",
+            "bgcolor": "background.paper",
+            "boxShadow": 24,
+            "p": 1
+        }
+    }
+}

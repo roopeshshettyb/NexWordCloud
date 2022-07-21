@@ -1,0 +1,11 @@
+word,weight,keywords,links
+Python,30,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"
+Java,25,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"
+Mysql,24,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"
+html,20,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"
+mongodb,18,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"
+nodejs,15,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"
+reactjs,12,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"
+perl,9,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"
+google,6,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"
+macos,3,"Programming, Language, Script","www.google.com,www.yahoo.co.in,www.github.com"

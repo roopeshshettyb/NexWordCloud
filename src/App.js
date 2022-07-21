@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, Box, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+
 try {
   // const Wordcloud = require("wordcloud");
 } catch (err) {
@@ -30,26 +31,34 @@ export default function App() {
   const canvasHeight = styles.cloudHeight;
   const canvasWidth = styles.cloudWidth;
   //edit canvasWidth to make the cloud bigger/smaller
+  const componentRef = useRef(null);
 
   if (queryParams.get('thumbnail') !== null) {
     let myBool = (queryParams.get('thumbnail') === 'true');
     thumbnailDisplay = myBool
   }
 
-  function popup(item, event) {
+  function popup(item, dimension, event) {
     try {
+      var el = document.getElementById('wordHighlight');
       if (item !== undefined) {
-        try {
-          setWord(item);
-          setElement(item[0])
-          setProps(event);
-          setPop(true);
-        } catch (err) {
-          console.log(err);
-        }
+        el.removeAttribute('hidden');
+        el.style.left = dimension.x + event.srcElement.offsetLeft + 'px';
+        el.style.top = dimension.y + event.srcElement.offsetTop + 'px';
+        el.style.width = dimension.w + 'px';
+        el.style.height = dimension.h + 'px';
+        //
+        setWord(item);
+        setElement(item[0])
+        setProps(event);
+        setPop(true);
       } else {
         clearTimeout(timer);
+        // var el = document.getElementById('wordHighlight');
+        componentRef.current.scrollTo(0, 0);
+        el.setAttribute('hidden', true);
         setPop(false);
+        setWord("")
       }
     } catch (err) {
       console.log(err);
@@ -148,7 +157,7 @@ export default function App() {
       click: (item, dimension, event) => {
         event.cancelBubble = true;
         if (event.stopPropagation) event.stopPropagation();
-        popup(item, event, dimension);
+        popup(item, dimension, event);
       }
     });
   }
@@ -235,26 +244,22 @@ export default function App() {
   }, [maxWeight]);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
+
     <div>
+
       {!thumbnailDisplay &&
         <div>
           <div style={{
             display: 'flex',
             justifyContent: 'center'
           }}
-            onMouseLeave={() => {
-              setPop(false);
-              setWord("")
-            }}
-            onClick={() => {
-              if (pop === true && word !== '') {
-                setPop(false)
-                setWord('')
-              }
-            }}
+            onMouseLeave={() => { popup() }}
+            onClick={() => { if (pop === true && word !== '') popup() }}
           >
             <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
+            <div id='wordHighlight'></div>
             <Box id="popuphover"
+              ref={componentRef}
               hidden={!pop} sx={{
                 top: props.y,
                 left: props.x,
@@ -271,10 +276,7 @@ export default function App() {
                 transition: "height 0.3s",
                 py: 1.5,
               }}
-              onMouseLeave={() => {
-                setPop(false);
-                setWord("")
-              }}
+              onMouseLeave={() => { popup() }}
             >
               {styles.popup.displayWord && <div style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
                 {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
@@ -326,16 +328,8 @@ export default function App() {
       </div>
       {thumbnailDisplay && <Box hidden={!open} sx={styles.box}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-          onMouseLeave={() => {
-            setPop(false);
-            setWord("")
-          }}
-          onClick={() => {
-            if (pop === true && word !== '') {
-              setPop(false)
-              setWord('')
-            }
-          }}
+          onMouseLeave={() => { popup() }}
+          onClick={() => { if (pop === true && word !== '') popup() }}
         >
           <IconButton
             aria-label="close"
@@ -350,7 +344,9 @@ export default function App() {
             <CloseIcon />
           </IconButton>
           <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
+          <div id='wordHighlight'></div>
           <Box id="popuphover"
+            ref={componentRef}
             hidden={!pop} sx={{
               top: props.offsetY,
               left: props.offsetX,
@@ -367,10 +363,7 @@ export default function App() {
               transition: "height 0.3s",
               py: 1.5,
             }}
-            onMouseLeave={() => {
-              setPop(false);
-              setWord("")
-            }}
+            onMouseLeave={() => { popup() }}
           >
             {styles.popup.displayWord && <div id='popup' style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
               {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
