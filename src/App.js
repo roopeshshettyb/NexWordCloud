@@ -17,7 +17,7 @@ export default function App() {
   const queryParams = new URLSearchParams(window.location.search);
   const filename = queryParams.get("input") || "words";
   const file = require("../public/" + filename + ".json")
-  const data = file.words;
+  const data = file.words.sort((a, b) => { return b.weight - a.weight });
   const styles = file.style
   // const data = require("../public/words.json").words;
   const [pop, setPop] = useState(false);
@@ -31,6 +31,12 @@ export default function App() {
   const canvasWidth = styles.cloudWidth;
   //edit canvasWidth to make the cloud bigger/smaller
   const componentRef = useRef(null);
+
+  const count = data.length
+  const minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
+  const medianOne = median(data.slice(0, Math.floor((2 * count) / 3)));
+  const medianTwo = median(data.slice(Math.floor(count / 3), count));
+  const max = Math.max(...data.map((w) => w.weight))
 
   if (queryParams.get('thumbnail') !== null) {
     let myBool = (queryParams.get('thumbnail') === 'true');
@@ -89,16 +95,10 @@ export default function App() {
     el.setAttribute('hidden', true);
     setOpen(true)
     let final_data = [];
-    let count = data.length
     data.forEach((w) => {
       final_data.push([w.word, w.weight, w.click, w.color, w.weight]);
     });
-    data.sort((a, b) => a["weight"] - b["weight"]);
     setMaxWeight(Math.max(...data.map((w) => w.weight)));
-    data.sort((a, b) => b["weight"] - a["weight"]);
-    let minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
-    let medianOne = median(data.slice(0, Math.floor((2 * count) / 3)));
-    let medianTwo = median(data.slice(Math.floor(count / 3), count));
     var listColorCounter = 0;
     Wordcloud(canvasRef.current, {
       list: final_data,
@@ -162,16 +162,10 @@ export default function App() {
   }
   function generateThumbnail() {
     let final_data = [];
-    let count = data.length
     data.forEach((w) => {
       final_data.push([w.word, w.weight, w.click, w.color, w.weight]);
     });
-    data.sort((a, b) => a["weight"] - b["weight"]);
     setMaxWeight(Math.max(...data.map((w) => w.weight)));
-    data.sort((a, b) => b["weight"] - a["weight"]);
-    let minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
-    let medianOne = median(data.slice(0, Math.floor((2 * count) / 3)));
-    let medianTwo = median(data.slice(Math.floor(count / 3), count));
     var listColorCounter = 0;
     Wordcloud(thumbnailCanvasRef.current, {
       list: final_data,

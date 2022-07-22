@@ -22,5 +22,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-
+public/words6.json
 public/words3.json
+public/words4.json
+public/words5.json
