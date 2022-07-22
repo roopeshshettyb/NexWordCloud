@@ -2,37 +2,35 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, Box, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 
-try {
-  // const Wordcloud = require("wordcloud");
-} catch (err) {
-
-}
+try {  // const Wordcloud = require("wordcloud");
+} catch (err) { }
 // for deployment use above code.
 
 export default function App() {
+  const Wordcloud = require("wordcloud");
+  const queryParams = new URLSearchParams(window.location.search);
+
   var canvasRef = useRef(null);
   var thumbnailCanvasRef = useRef(null);
-  const Wordcloud = require("wordcloud");
+  const componentRef = useRef(null);
 
-  const queryParams = new URLSearchParams(window.location.search);
   const filename = queryParams.get("input") || "words";
   const file = require("../public/" + filename + ".json")
-  var data = file.words.sort((a, b) => { return a.weight - b.weight });
   const styles = file.style
-  // const data = require("../public/words.json").words;
+  var data = file.words.sort((a, b) => { return a.weight - b.weight });
+
   const [pop, setPop] = useState(false);
   const [word, setWord] = useState("");
   const [props, setProps] = useState([]);
   const [element, setElement] = useState("hello")
-  var thumbnailDisplay = styles.thumbnail.display
   const [maxWeight, setMaxWeight] = useState(0);
   const [open, setOpen] = useState(false);
-  const canvasHeight = styles.cloudHeight;
-  const canvasWidth = styles.cloudWidth;
-  //edit canvasWidth to make the cloud bigger/smaller
-  const componentRef = useRef(null);
 
+  const canvasHeight = styles.cloudHeight;
+  const canvasWidth = styles.cloudWidth;   //edit canvasWidth to make the cloud bigger/smaller
   const count = data.length
+  var thumbnailDisplay = styles.thumbnail.display
+
   var minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
   const max = Math.max(...data.map((w) => w.weight))
   data.forEach(ele => { ele.weight = normalise(ele.weight, max, minWeight) })
@@ -41,13 +39,70 @@ export default function App() {
   minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
   data.sort((a, b) => { return b.weight - a.weight });
 
-  if (queryParams.get('thumbnail') !== null) {
-    let myBool = (queryParams.get('thumbnail') === 'true');
-    thumbnailDisplay = myBool
-  }
+  if (queryParams.get('thumbnail') !== null) { thumbnailDisplay = (queryParams.get('thumbnail') === 'true') }
 
   function normalise(val, max, min) {
     return (val - min) * 500 / (max - min);
+  }
+
+  // Overwrite Math.random to use seed to ensure same word cloud is printed on every render
+  function randseed(s) {
+    s = Math.sin(s) * 10000;
+    return s - Math.floor(s);
+  }
+
+  let seed = 0;
+  Math.random = function () {
+    seed++;
+    return randseed(seed);
+  };
+
+  function median(arr) {
+    arr.sort((a, b) => a["weight"] - b["weight"]);
+    let mid = arr.length >> 1;
+    let res =
+      arr.length % 2
+        ? arr[mid].weight
+        : (arr[mid - 1].weight + arr[mid].weight) / 2;
+    return res;
+  }
+
+  function getColor(word, weight) {
+    if (weight >= minWeight && weight < medianOne) {
+      return "rgba(0,0,0,0.6)";
+    } else if (weight < medianTwo && weight >= medianOne) {
+      return "rgba(0,0,0,0.8)";
+    } else if (weight <= maxWeight && weight >= medianTwo) {
+      return "rgba(0,0,0,1.0)";
+    }
+    return 'red'
+  }
+
+  function getSize(size, item, final_data) {
+    let biggest = final_data[0][0].length;
+    let max = maxWeight;
+    let factor = 1
+    if (biggest <= 7) {
+      if (size === max) {
+        return factor / 1.31 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;
+      }
+      return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+    } else if (biggest > 7 && biggest <= 10) {
+      if (size === max) {
+        return factor / 1.3 * (Math.pow(size, 0.85) * (3 * (canvasWidth - 200) / 2)) / 1024;
+      }
+      return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+    } else if (biggest > 10 && biggest <= 13) {
+      if (size === max) {
+        return factor / 1.3 * (Math.pow(size, 0.8) * (3 * (canvasWidth - 200) / 2)) / 1024;
+      }
+      return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+    } else if (biggest > 13) {
+      if (size === max) {
+        return factor / 1.3 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 200) / 2)) / 1024;
+      }
+      return factor / 1.2 * (Math.pow(size, 0.70) * (1.5 * (canvasWidth - 300) / 2)) / 1024;
+    }
   }
 
   function popup(item, dimension, event) {
@@ -75,28 +130,6 @@ export default function App() {
     }
   }
 
-  // Overwrite Math.random to use seed to ensure same word cloud is printed on every render
-  function randseed(s) {
-    s = Math.sin(s) * 10000;
-    return s - Math.floor(s);
-  }
-
-  let seed = 0;
-  Math.random = function () {
-    seed++;
-    return randseed(seed);
-  };
-
-  function median(arr) {
-    arr.sort((a, b) => a["weight"] - b["weight"]);
-    let mid = arr.length >> 1;
-    let res =
-      arr.length % 2
-        ? arr[mid].weight
-        : (arr[mid - 1].weight + arr[mid].weight) / 2;
-    return res;
-  }
-
   function generateCloud() {
     var el = document.getElementById('wordHighlight');
     el.setAttribute('hidden', true);
@@ -115,55 +148,17 @@ export default function App() {
       shuffle: false,
       fontFamily: styles.fontFamily || "Raleway",
       backgroundColor: styles.backgroundColor || "White",
-      color: (size, weight, item, b, c, d) => {
-        if (final_data[listColorCounter][3] !== undefined) {
-          return final_data[listColorCounter++][3];
-        } else {
-          weight = d[2]
-          if (weight >= minWeight && weight < medianOne) {
-            return "rgba(0,0,0,0.6)";
-          } else if (weight < medianTwo && weight >= medianOne) {
-            return "rgba(0,0,0,0.8)";
-          } else if (weight <= maxWeight && weight >= medianTwo) {
-            return "rgba(0,0,0,1.0)";
-          }
-        }
-        return "black";
+      color: (word, weight) => {
+        if (final_data[listColorCounter][3] !== undefined) { return final_data[listColorCounter++][3]; } else { return getColor(word, weight) }
       },
       rotationSteps: 2,
       rotateRatio: 0.4,
-      weightFactor: function (size, item) {
-        let biggest = final_data[0][0].length;
-        let max = maxWeight;
-        let factor = 1
-        if (biggest <= 7) {
-          if (size === max) {
-            return factor / 1.3 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;
-          }
-          return factor / 1.15 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
-        } else if (biggest > 7 && biggest <= 10) {
-          if (size === max) {
-            return factor / 1.3 * (Math.pow(size, 0.85) * (3 * (canvasWidth - 200) / 2)) / 1024;
-          }
-          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
-        } else if (biggest > 10 && biggest <= 13) {
-          if (size === max) {
-            return factor / 1.3 * (Math.pow(size, 0.8) * (3 * (canvasWidth - 200) / 2)) / 1024;
-          }
-          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
-        } else if (biggest > 13) {
-          if (size === max) {
-            return factor / 1.3 * (Math.pow(size, 0.75) * (4 * (canvasWidth - 200) / 2)) / 1024;
-          }
-          return factor / 1.2 * (Math.pow(size, 0.70) * (4 * (canvasWidth - 300) / 2)) / 1024;
-        }
-      },
+      weightFactor: (size, item) => getSize(size, item, final_data),
       shrinkToFit: true,
       minSize: 3,
       drawOutOfBound: false,
       click: (item, dimension, event) => {
-        event.cancelBubble = true;
-        if (event.stopPropagation) event.stopPropagation();
+        event.cancelBubble = true; if (event.stopPropagation) event.stopPropagation();
         popup(item, dimension, event);
       }
     });
@@ -183,52 +178,13 @@ export default function App() {
       shuffle: false,
       fontFamily: styles.fontFamily || "Raleway",
       backgroundColor: styles.backgroundColor || "White",
-      color: (size, weight, item, b, c, d) => {
-        if (final_data[listColorCounter][3] !== undefined) {
-          return final_data[listColorCounter++][3];
-        } else {
-          weight = d[2]
-          if (weight >= minWeight && weight < medianOne) {
-            return "rgba(0,0,0,0.6)";
-          } else if (weight < medianTwo && weight >= medianOne) {
-            return "rgba(0,0,0,0.8)";
-          } else if (weight <= maxWeight && weight >= medianTwo) {
-            return "rgba(0,0,0,1.0)";
-          }
-        }
-        return "black";
+      color: (word, weight) => {
+        if (final_data[listColorCounter][3] !== undefined) { return final_data[listColorCounter++][3]; } else { return getColor(word, weight) }
       },
       rotationSteps: 2,
       rotateRatio: 0.4,
-      fontWeight: function (item, event, dimension) {
-        return "bold";
-      },
-      weightFactor: function (size, item) {
-        let biggest = final_data[0][0].length;
-        let max = maxWeight;
-        let factor = 1
-        if (biggest <= 7) {
-          if (size === max) {
-            return factor / 1.31 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;
-          }
-          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
-        } else if (biggest > 7 && biggest <= 10) {
-          if (size === max) {
-            return factor / 1.3 * (Math.pow(size, 0.85) * (3 * (canvasWidth - 200) / 2)) / 1024;
-          }
-          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
-        } else if (biggest > 10 && biggest <= 13) {
-          if (size === max) {
-            return factor / 1.3 * (Math.pow(size, 0.8) * (3 * (canvasWidth - 200) / 2)) / 1024;
-          }
-          return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
-        } else if (biggest > 13) {
-          if (size === max) {
-            return factor / 1.3 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 200) / 2)) / 1024;
-          }
-          return factor / 1.2 * (Math.pow(size, 0.70) * (1.5 * (canvasWidth - 300) / 2)) / 1024;
-        }
-      },
+      fontWeight: function () { return "bold"; },
+      weightFactor: (size, item) => getSize(size, item, final_data),
       shrinkToFit: true,
       minSize: 3,
       drawOutOfBound: false,
@@ -236,18 +192,13 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (thumbnailDisplay === false) {
-      generateCloud()
-    } else {
-      generateThumbnail()
-    }
-    console.log(data)
+    if (thumbnailDisplay === false) { generateCloud() }
+    else { generateThumbnail() }
   }, [maxWeight]);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
 
     <div>
-
       {!thumbnailDisplay &&
         <div>
           <div style={{
