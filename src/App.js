@@ -201,10 +201,7 @@ export default function App() {
     <div>
       {!thumbnailDisplay &&
         <div>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center'
-          }}
+          <div style={{ display: 'flex', justifyContent: 'center' }}
             onMouseLeave={() => { popup() }}
             onClick={() => { if (pop === true && word !== '') popup() }}
           >
@@ -238,41 +235,27 @@ export default function App() {
               {(styles.popup.displayCount || false) && <div style={styles.popup.padding}>
                 Count: {word[4]}
               </div>}
-              {(styles.popup.displayWord || false) &&
-                <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
+              {(styles.popup.displayWord || false) && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}></div>}
+              {(styles.popup.displayWord || false) && <div style={{ padding: '5px' }}></div>}
+              {word && word[2].map((link, idx) => (
+                <div id='popup' key={idx} >
+                  <Link
+                    href={link.link}
+                    target="_blank"
+                    underline="none"
+                    style={{ color: styles.popup.linkColor || "blue", }}
+                  >
+                    <div id='popup' key={idx} style={styles.popup.padding}>
+                      {link.label.charAt(0).toUpperCase() + link.label.slice(1, link.label.length)}
+                    </div>
+                  </Link>
                 </div>
-              }
-              {(styles.popup.displayWord || false) && <div style={{ padding: '5px' }}>
-              </div>}
-              {word &&
-                word[2].map((link, idx) => (
-                  <div id='popup' key={idx} >
-                    <Link
-                      href={link.link}
-                      target="_blank"
-                      underline="none"
-                      style={{ color: styles.popup.linkColor || "blue", }}
-                    >
-                      <div id='popup' key={idx} style={styles.popup.padding}>
-                        {link.label.charAt(0).toUpperCase() + link.label.slice(1, link.label.length)}
-                      </div>
-                    </Link>
-                  </div>
-                ))}
+              ))}
             </Box>
-
           </div>
           {styles.caption && (
-            <div
-            >
-              <h2
-                style={{
-                  fontFamily: styles.fontFamily || "Raleway",
-                  color: styles.captionColor || "blue",
-                  display: 'flex',
-                  justifyContent: 'center'
-                }}
-              >
+            <div>
+              <h2 style={{ fontFamily: styles.fontFamily || "Raleway", color: styles.captionColor || "blue", display: 'flex', justifyContent: 'center' }}>
                 {styles.caption}
               </h2>
             </div>
@@ -290,12 +273,7 @@ export default function App() {
           <IconButton
             aria-label="close"
             onClick={() => setOpen(false)}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
+            sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500], }}
           >
             <CloseIcon />
           </IconButton>
@@ -327,10 +305,8 @@ export default function App() {
             {(styles.popup.displayCount || false) && <div id='popup' style={styles.popup.padding}>
               Count: {word[1]}
             </div>}
-            {(styles.popup.displayWord || false) && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
-            </div>}
-            {(styles.popup.displayWord || false) && <div style={{ padding: '5px' }}>
-            </div>}
+            {(styles.popup.displayWord || false) && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}></div>}
+            {(styles.popup.displayWord || false) && <div style={{ padding: '5px' }}></div>}
             {word &&
               word[2].map((link, idx) => (
                 <div id='popup' key={idx} >
@@ -349,16 +325,8 @@ export default function App() {
           </Box>
         </div>
         {styles.caption && (
-          <div
-          >
-            <h2
-              style={{
-                fontFamily: styles.fontFamily || "Raleway",
-                color: styles.captionColor || "blue",
-                display: 'flex',
-                justifyContent: 'center'
-              }}
-            >
+          <div>
+            <h2 style={{ fontFamily: styles.fontFamily || "Raleway", color: styles.captionColor || "blue", display: 'flex', justifyContent: 'center' }}>
               {styles.caption}
             </h2>
           </div>
