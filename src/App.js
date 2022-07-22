@@ -17,7 +17,7 @@ export default function App() {
   const queryParams = new URLSearchParams(window.location.search);
   const filename = queryParams.get("input") || "words";
   const file = require("../public/" + filename + ".json")
-  const data = file.words.sort((a, b) => { return b.weight - a.weight });
+  var data = file.words.sort((a, b) => { return a.weight - b.weight });
   const styles = file.style
   // const data = require("../public/words.json").words;
   const [pop, setPop] = useState(false);
@@ -33,14 +33,21 @@ export default function App() {
   const componentRef = useRef(null);
 
   const count = data.length
-  const minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
+  var minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
+  const max = Math.max(...data.map((w) => w.weight))
+  data.forEach(ele => { ele.weight = normalise(ele.weight, max, minWeight) })
   const medianOne = median(data.slice(0, Math.floor((2 * count) / 3)));
   const medianTwo = median(data.slice(Math.floor(count / 3), count));
-  const max = Math.max(...data.map((w) => w.weight))
+  minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
+  data.sort((a, b) => { return b.weight - a.weight });
 
   if (queryParams.get('thumbnail') !== null) {
     let myBool = (queryParams.get('thumbnail') === 'true');
     thumbnailDisplay = myBool
+  }
+
+  function normalise(val, max, min) {
+    return (val - min) * 500 / (max - min);
   }
 
   function popup(item, dimension, event) {
@@ -108,10 +115,11 @@ export default function App() {
       shuffle: false,
       fontFamily: styles.fontFamily || "Raleway",
       backgroundColor: styles.backgroundColor || "White",
-      color: (size, weight) => {
+      color: (size, weight, item, b, c, d) => {
         if (final_data[listColorCounter][3] !== undefined) {
           return final_data[listColorCounter++][3];
         } else {
+          weight = d[2]
           if (weight >= minWeight && weight < medianOne) {
             return "rgba(0,0,0,0.6)";
           } else if (weight < medianTwo && weight >= medianOne) {
@@ -234,6 +242,7 @@ export default function App() {
     } else {
       generateThumbnail()
     }
+    console.log(data)
   }, [maxWeight]);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
