@@ -135,7 +135,7 @@ export default function App() {
       weightFactor: function (size, item) {
         let biggest = final_data[0][0].length;
         let max = maxWeight;
-        let factor = styles.weightFactor
+        let factor = 1
         if (biggest <= 7) {
           if (size === max) {
             return factor / 1.3 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;
@@ -207,7 +207,6 @@ export default function App() {
         let biggest = final_data[0][0].length;
         let max = maxWeight;
         let factor = 1
-        if (maxWeight < 100) factor = 40
         if (biggest <= 7) {
           if (size === max) {
             return factor / 1.31 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;

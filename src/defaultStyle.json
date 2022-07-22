@@ -6,7 +6,6 @@
         "captionSize": "10",
         "cloudWidth": "900",
         "cloudHeight": "500",
-        "weightFactor": 10,
         "thumbnail": {
             "display": false,
             "height": 110,
