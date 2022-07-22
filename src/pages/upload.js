@@ -3,13 +3,21 @@ import { useState } from "react";
 import { Button } from '@mui/material'
 
 
+
 function Upload() {
     const styles = require('../defaultStyle.json')
     const [parsedData, setParsedData] = useState();
-    const [fileName, setFileName] = useState()
-    const styling = {
-        "textAlign": "left"
-    }
+    const [fileName, setFileName] = useState("download")
+    const styling = { "textAlign": "left" }
+    const templateData = require('../template.json').data
+    const csv = Papa.unparse(templateData);
+    const [isChecked, setIsChecked] = useState(false);
+
+    const handleOnChange = () => {
+        if (!isChecked) { setParsedData({ style: styles.style, ...parsedData }); } else { parsedData.style = ""; setParsedData(parsedData); }
+        setIsChecked(!isChecked);
+    };
+
 
     const changeHandler = async (event) => {
         // Passing file data (event.target.files[0]) to parse using Papa.parse
@@ -27,8 +35,8 @@ function Upload() {
                 // Parsed Data Response in array format
                 results.data.forEach(ele => {
                     ele['weight'] = Number(ele['weight'])
-                    let keys = ele.keywords.replace(' ', '').split(',')
-                    let links = ele.links.replace(' ', '').split(',')
+                    let keys = ele.keywords.replace(' ', '').split(';')
+                    let links = ele.links.replace(' ', '').split(';')
                     delete ele["keywords"]
                     delete ele["links"]
                     ele["click"] = []
@@ -36,7 +44,8 @@ function Upload() {
                         ele["click"].push({ "label": key, "link": links[idx] })
                     })
                 })
-                let obj = { style: styles.style, words: results.data }
+                let obj = { words: results.data }
+
                 setParsedData(obj)
             },
         })
@@ -50,6 +59,12 @@ function Upload() {
 
             <div style={styling}>
                 {/* File Uploader */}
+                <Button variant="contained" style={{ margin: "10px auto" }} href={`data:text/csv;charset=utf-8,${encodeURIComponent(
+                    csv
+                )}`}
+                    download={fileName} >
+                    Download Template
+                </Button>
                 <Button >
                     <input
                         type="file"
@@ -59,6 +74,14 @@ function Upload() {
                         style={{ display: "block", margin: "10px auto" }}
                     />
                 </Button>
+                <div><input
+                    type="checkbox"
+                    id="default style"
+                    name="default style"
+                    value="Add Default Style"
+                    checked={isChecked}
+                    onChange={handleOnChange}
+                />Add Default Styling</div>
                 <div className="form-group p-2">
                     <br></br>
                     <small>

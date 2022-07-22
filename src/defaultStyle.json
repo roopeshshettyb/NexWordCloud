@@ -13,8 +13,8 @@
             "width": 200
         },
         "popup": {
-            "displayWord": true,
-            "displayCount": true,
+            "displayWord": false,
+            "displayCount": false,
             "backgroundColor": "white",
             "fontColor": "black",
             "linkColor": "black",

@@ -8,13 +8,13 @@
         "cloudHeight": "500",
         "weightFactor": 1,
         "thumbnail": {
-            "display": false,
+            "display": true,
             "height": 110,
             "width": 200
         },
         "popup": {
-            "displayWord": true,
-            "displayCount": true,
+            "displayWord": false,
+            "displayCount": false,
             "backgroundColor": "white",
             "fontColor": "black",
             "linkColor": "black",

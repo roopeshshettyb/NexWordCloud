@@ -27,7 +27,6 @@ export default function App() {
   var thumbnailDisplay = styles.thumbnail.display
   const [maxWeight, setMaxWeight] = useState(0);
   const [open, setOpen] = useState(false);
-  var timer = null
   const canvasHeight = styles.cloudHeight;
   const canvasWidth = styles.cloudWidth;
   //edit canvasWidth to make the cloud bigger/smaller
@@ -53,8 +52,6 @@ export default function App() {
         setProps(event);
         setPop(true);
       } else {
-        clearTimeout(timer);
-        // var el = document.getElementById('wordHighlight');
         componentRef.current.scrollTo(0, 0);
         el.setAttribute('hidden', true);
         setPop(false);
@@ -88,6 +85,8 @@ export default function App() {
   }
 
   function generateCloud() {
+    var el = document.getElementById('wordHighlight');
+    el.setAttribute('hidden', true);
     setOpen(true)
     let final_data = [];
     let count = data.length
@@ -278,15 +277,19 @@ export default function App() {
               }}
               onMouseLeave={() => { popup() }}
             >
-              {styles.popup.displayWord && <div style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
-                {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
-              </div>}
-              {styles.popup.displayCount && <div style={styles.popup.padding}>
+              {(styles.popup.displayWord || false) &&
+                <div style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
+                  {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
+                </div>
+              }
+              {(styles.popup.displayCount || false) && <div style={styles.popup.padding}>
                 Count: {word[4]}
               </div>}
-              {styles.popup.displayWord && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
-              </div>}
-              {styles.popup.displayWord && <div style={{ padding: '5px' }}>
+              {(styles.popup.displayWord || false) &&
+                <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
+                </div>
+              }
+              {(styles.popup.displayWord || false) && <div style={{ padding: '5px' }}>
               </div>}
               {word &&
                 word[2].map((link, idx) => (
@@ -365,15 +368,15 @@ export default function App() {
             }}
             onMouseLeave={() => { popup() }}
           >
-            {styles.popup.displayWord && <div id='popup' style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
+            {(styles.popup.displayWord || false) && <div id='popup' style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
               {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
             </div>}
-            {styles.popup.displayCount && <div id='popup' style={styles.popup.padding}>
+            {(styles.popup.displayCount || false) && <div id='popup' style={styles.popup.padding}>
               Count: {word[1]}
             </div>}
-            {styles.popup.displayWord && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
+            {(styles.popup.displayWord || false) && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}>
             </div>}
-            {styles.popup.displayWord && <div style={{ padding: '5px' }}>
+            {(styles.popup.displayWord || false) && <div style={{ padding: '5px' }}>
             </div>}
             {word &&
               word[2].map((link, idx) => (
