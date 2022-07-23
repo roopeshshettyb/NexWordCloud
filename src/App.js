@@ -107,13 +107,13 @@ export default function App() {
 
   function popup(item, dimension, event) {
     try {
-      var el = document.getElementById('wordHighlight');
+      // var el = document.getElementById('wordHighlight');
       if (item !== undefined) {
-        el.removeAttribute('hidden');
-        el.style.left = dimension.x + event.srcElement.offsetLeft + 'px';
-        el.style.top = dimension.y + event.srcElement.offsetTop + 'px';
-        el.style.width = dimension.w + 'px';
-        el.style.height = dimension.h + 'px';
+        // el.removeAttribute('hidden');
+        // el.style.left = dimension.x + event.srcElement.offsetLeft + 'px';
+        // el.style.top = dimension.y + event.srcElement.offsetTop + 'px';
+        // el.style.width = dimension.w + 'px';
+        // el.style.height = dimension.h + 'px';
         //
         setWord(item);
         setElement(item[0])
@@ -121,7 +121,7 @@ export default function App() {
         setPop(true);
       } else {
         componentRef.current.scrollTo(0, 0);
-        el.setAttribute('hidden', true);
+        // el.setAttribute('hidden', true);
         setPop(false);
         setWord("")
       }
@@ -131,8 +131,8 @@ export default function App() {
   }
 
   function generateCloud() {
-    var el = document.getElementById('wordHighlight');
-    el.setAttribute('hidden', true);
+    // var el = document.getElementById('wordHighlight');
+    // el.setAttribute('hidden', true);
     setOpen(true)
     let final_data = [];
     data.forEach((w) => {
@@ -206,7 +206,7 @@ export default function App() {
             onClick={() => { if (pop === true && word !== '') popup() }}
           >
             <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
-            <div id='wordHighlight'></div>
+            {/* <div id='wordHighlight'></div> */}
             <Box id="popuphover"
               ref={componentRef}
               hidden={!pop} sx={{
@@ -278,7 +278,7 @@ export default function App() {
             <CloseIcon />
           </IconButton>
           <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
-          <div id='wordHighlight'></div>
+          {/* <div id='wordHighlight'></div> */}
           <Box id="popuphover"
             ref={componentRef}
             hidden={!pop} sx={{
@@ -332,7 +332,6 @@ export default function App() {
           </div>
         )}
       </Box>}
-
     </div>
   );
 }
