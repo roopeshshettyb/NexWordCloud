@@ -55,9 +55,13 @@
 #wordHighlight {
   position: absolute;
   visibility: false;
-  border: 3px solid rgb(2, 101, 230);
+  z-index: 1;
+  background-color:black;
+  opacity: 0.3;
+  border: 3px solid rgb(75, 76, 77);
   box-shadow: 0 0 4px 0 #008;
   padding: 2px;
   cursor: pointer;
   /*margin: -4px 0 0 -4px;*/
-  pointer-events: none; }
+  pointer-events: none; 
+}

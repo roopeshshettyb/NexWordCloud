@@ -17,6 +17,17 @@ export default function App() {
   const filename = queryParams.get("input") || "words";
   const file = require("../public/" + filename + ".json")
   const styles = file.style
+  let popUpStyle = {
+    "position": "absolute",
+    "top": "50%",
+    "left": "50%",
+    "transform": "translate(-50%, -50%)",
+    "minWidth": "70vw",
+    "minHeight": "90vh",
+    "bgcolor": "background.paper",
+    "boxShadow": 24,
+    "p": 1
+  }
   var data = file.words.sort((a, b) => { return a.weight - b.weight });
 
   const [pop, setPop] = useState(false);
@@ -26,10 +37,15 @@ export default function App() {
   const [maxWeight, setMaxWeight] = useState(0);
   const [open, setOpen] = useState(false);
 
-  const canvasHeight = styles.cloudHeight;
-  const canvasWidth = styles.cloudWidth;   //edit canvasWidth to make the cloud bigger/smaller
+  const canvasHeight = styles.cloudHeight || 900;
+  const canvasWidth = styles.cloudWidth || 500;   //edit canvasWidth to make the cloud bigger/smaller
   const count = data.length
-  var thumbnailDisplay = styles.thumbnail.display
+  var thumbnailDisplay = styles.thumbnail.display || false
+  const displayPopup = styles.popup.display || true
+  const displayHighlight = styles.highlight.display !== undefined ? styles.highlight.display : false
+  const displayWord = styles.popup.displayWord !== undefined ? styles.popup.displayWord : false;
+  const displayCount = styles.popup.displayCount !== undefined ? styles.popup.displayCount : false;
+
 
   var minWeight = Math.min(...data.slice(0, count).map((w) => w.weight));
   const max = Math.max(...data.map((w) => w.weight))
@@ -42,7 +58,7 @@ export default function App() {
   if (queryParams.get('thumbnail') !== null) { thumbnailDisplay = (queryParams.get('thumbnail') === 'true') }
 
   function normalise(val, max, min) {
-    return (val - min) * 500 / (max - min);
+    return (val - min) * 250 / (max - min);
   }
 
   // Overwrite Math.random to use seed to ensure same word cloud is printed on every render
@@ -81,47 +97,49 @@ export default function App() {
   function getSize(size, item, final_data) {
     let biggest = final_data[0][0].length;
     let max = maxWeight;
-    let factor = 1
+    let factor = styles.weightFactor || 1
     if (biggest <= 7) {
       if (size === max) {
-        return factor / 1.31 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 300) / 2)) / 1024;
+        return factor / 1.31 * (Math.pow(size, 1) * (3 * (canvasWidth - 300) / 2)) / 1024;
       }
-      return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+      return factor / 1.2 * (Math.pow(size, 0.90) * (3 * (canvasWidth - 300) / 2)) / 1024;
     } else if (biggest > 7 && biggest <= 10) {
       if (size === max) {
-        return factor / 1.3 * (Math.pow(size, 0.85) * (3 * (canvasWidth - 200) / 2)) / 1024;
+        return factor / 1.3 * (Math.pow(size, 0.95) * (3 * (canvasWidth - 200) / 2)) / 1024;
       }
-      return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+      return factor / 1.2 * (Math.pow(size, 0.90) * (3 * (canvasWidth - 300) / 2)) / 1024;
     } else if (biggest > 10 && biggest <= 13) {
       if (size === max) {
-        return factor / 1.3 * (Math.pow(size, 0.8) * (3 * (canvasWidth - 200) / 2)) / 1024;
+        return factor / 1.3 * (Math.pow(size, 0.90) * (3 * (canvasWidth - 200) / 2)) / 1024;
       }
-      return factor / 1.2 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 300) / 2)) / 1024;
+      return factor / 1.2 * (Math.pow(size, 0.90) * (3 * (canvasWidth - 300) / 2)) / 1024;
     } else if (biggest > 13) {
       if (size === max) {
-        return factor / 1.3 * (Math.pow(size, 0.75) * (3 * (canvasWidth - 200) / 2)) / 1024;
+        return factor / 1.3 * (Math.pow(size, 0.90) * (3 * (canvasWidth - 200) / 2)) / 1024;
       }
-      return factor / 1.2 * (Math.pow(size, 0.70) * (1.5 * (canvasWidth - 300) / 2)) / 1024;
+      return factor / 1.2 * (Math.pow(size, 0.90) * (3 * (canvasWidth - 300) / 2)) / 1024;
     }
   }
 
   function popup(item, dimension, event) {
     try {
-      // var el = document.getElementById('wordHighlight');
+      if (displayHighlight) var el = document.getElementById('wordHighlight');
       if (item !== undefined) {
-        // el.removeAttribute('hidden');
-        // el.style.left = dimension.x + event.srcElement.offsetLeft + 'px';
-        // el.style.top = dimension.y + event.srcElement.offsetTop + 'px';
-        // el.style.width = dimension.w + 'px';
-        // el.style.height = dimension.h + 'px';
+        if (displayHighlight) {
+          el.removeAttribute('hidden');
+          el.style.left = dimension.x + event.srcElement.offsetLeft + 'px';
+          el.style.top = dimension.y + event.srcElement.offsetTop + 'px';
+          el.style.width = dimension.w + 'px';
+          el.style.height = dimension.h + 'px';
+        }
         //
         setWord(item);
         setElement(item[0])
         setProps(event);
         setPop(true);
       } else {
+        if (displayHighlight) el.setAttribute('hidden', true);
         componentRef.current.scrollTo(0, 0);
-        // el.setAttribute('hidden', true);
         setPop(false);
         setWord("")
       }
@@ -131,8 +149,10 @@ export default function App() {
   }
 
   function generateCloud() {
-    // var el = document.getElementById('wordHighlight');
-    // el.setAttribute('hidden', true);
+    if (displayHighlight) {
+      var el = document.getElementById('wordHighlight');
+      el.setAttribute('hidden', true);
+    }
     setOpen(true)
     let final_data = [];
     data.forEach((w) => {
@@ -153,6 +173,7 @@ export default function App() {
       },
       rotationSteps: 2,
       rotateRatio: 0.4,
+      // weightFactor: (size, item) => { if (size === 250) return Math.pow(size, 1.5); return Math.pow(size, 0.9) },
       weightFactor: (size, item) => getSize(size, item, final_data),
       shrinkToFit: true,
       minSize: 3,
@@ -163,6 +184,7 @@ export default function App() {
       }
     });
   }
+
   function generateThumbnail() {
     let final_data = [];
     data.forEach((w) => {
@@ -206,18 +228,18 @@ export default function App() {
             onClick={() => { if (pop === true && word !== '') popup() }}
           >
             <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
-            {/* <div id='wordHighlight'></div> */}
-            <Box id="popuphover"
+            {displayHighlight && <div id='wordHighlight'></div>}
+            {displayPopup && <Box id="popuphover"
               ref={componentRef}
               hidden={!pop} sx={{
                 top: props.y,
                 left: props.x,
                 position: "absolute",
-                minWidth: styles.popup.width,
+                minWidth: styles.popup.width || "250px",
                 zIndex: 1,
-                fontSize: styles.popup.fontSize,
+                fontSize: styles.popup.fontSize || "22px",
                 fontFamily: styles.fontFamily || "Raleway",
-                backgroundColor: styles.popup.backgroundColor || "black",
+                backgroundColor: styles.popup.backgroundColor || "white",
                 color: styles.popup.fontColor || "black",
                 transform: 'translate(7%,10%)',
                 boxShadow: 24,
@@ -227,16 +249,16 @@ export default function App() {
               }}
               onMouseLeave={() => { popup() }}
             >
-              {(styles.popup.displayWord || false) &&
+              {(displayWord || false) &&
                 <div style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
                   {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
                 </div>
               }
-              {(styles.popup.displayCount || false) && <div style={styles.popup.padding}>
+              {(displayCount || false) && <div style={{ "padding": "8px 30px 8px 30px" }}>
                 Count: {word[4]}
               </div>}
-              {(styles.popup.displayWord || false) && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}></div>}
-              {(styles.popup.displayWord || false) && <div style={{ padding: '5px' }}></div>}
+              {(displayWord || false) && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}></div>}
+              {(displayWord || false) && <div style={{ padding: '5px' }}></div>}
               {word && word[2].map((link, idx) => (
                 <div id='popup' key={idx} >
                   <Link
@@ -245,13 +267,13 @@ export default function App() {
                     underline="none"
                     style={{ color: styles.popup.linkColor || "blue", }}
                   >
-                    <div id='popup' key={idx} style={styles.popup.padding}>
+                    <div id='popup' key={idx} style={{ "padding": "8px 30px 8px 30px" }}>
                       {link.label.charAt(0).toUpperCase() + link.label.slice(1, link.label.length)}
                     </div>
                   </Link>
                 </div>
               ))}
-            </Box>
+            </Box>}
           </div>
           {styles.caption && (
             <div>
@@ -263,9 +285,9 @@ export default function App() {
         </div>
       }
       <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translate(-50%,50%' }}>
-        {thumbnailDisplay && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud() }} ref={thumbnailCanvasRef} width={styles.thumbnail.width} height={styles.thumbnail.height} />}
+        {thumbnailDisplay && <canvas style={{ cursor: "pointer" }} onClick={() => { open ? setOpen(false) : generateCloud() }} ref={thumbnailCanvasRef} width={styles.thumbnail.width || 200} height={styles.thumbnail.height || 110} />}
       </div>
-      {thumbnailDisplay && <Box hidden={!open} sx={styles.box}>
+      {thumbnailDisplay && <Box hidden={!open} sx={styles.box || popUpStyle}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           onMouseLeave={() => { popup() }}
           onClick={() => { if (pop === true && word !== '') popup() }}
@@ -278,16 +300,16 @@ export default function App() {
             <CloseIcon />
           </IconButton>
           <canvas style={{ cursor: "pointer" }} ref={canvasRef} width={canvasWidth} height={canvasHeight} />
-          {/* <div id='wordHighlight'></div> */}
-          <Box id="popuphover"
+          {displayHighlight && <div id='wordHighlight'></div>}
+          {displayPopup && <Box id="popuphover"
             ref={componentRef}
             hidden={!pop} sx={{
               top: props.offsetY,
               left: props.offsetX,
               position: "absolute",
-              minWidth: styles.popup.width,
+              minWidth: styles.popup.width || "250px",
               zIndex: 1,
-              fontSize: styles.popup.fontSize,
+              fontSize: styles.popup.fontSize || "22px",
               fontFamily: styles.fontFamily || "Raleway",
               backgroundColor: styles.popup.backgroundColor || "black",
               color: styles.popup.fontColor || "black",
@@ -299,14 +321,14 @@ export default function App() {
             }}
             onMouseLeave={() => { popup() }}
           >
-            {(styles.popup.displayWord || false) && <div id='popup' style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
+            {(displayWord || false) && <div id='popup' style={{ paddingTop: '8px', paddingLeft: '28px', paddingBottom: '8px', paddingRight: '30px', display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
               {element.charAt(0).toUpperCase() + element.slice(1, element.length)}
             </div>}
-            {(styles.popup.displayCount || false) && <div id='popup' style={styles.popup.padding}>
+            {(displayCount || false) && <div id='popup' style={{ "padding": "8px 30px 8px 30px" }}>
               Count: {word[1]}
             </div>}
-            {(styles.popup.displayWord || false) && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}></div>}
-            {(styles.popup.displayWord || false) && <div style={{ padding: '5px' }}></div>}
+            {(displayWord || false) && <div style={{ padding: '5px', borderBottom: '1px solid grey' }}></div>}
+            {(displayWord || false) && <div style={{ padding: '5px' }}></div>}
             {word &&
               word[2].map((link, idx) => (
                 <div id='popup' key={idx} >
@@ -316,13 +338,13 @@ export default function App() {
                     underline="none"
                     style={{ color: styles.popup.linkColor || "blue", }}
                   >
-                    <div id='popup' key={idx} style={styles.popup.padding}>
+                    <div id='popup' key={idx} style={{ "padding": "8px 30px 8px 30px" }}>
                       {link.label.charAt(0).toUpperCase() + link.label.slice(1, link.label.length)}
                     </div>
                   </Link>
                 </div>
               ))}
-          </Box>
+          </Box>}
         </div>
         {styles.caption && (
           <div>

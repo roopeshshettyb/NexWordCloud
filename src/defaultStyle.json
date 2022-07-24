@@ -6,25 +6,24 @@
         "captionSize": "10",
         "cloudWidth": "900",
         "cloudHeight": "500",
+        "weightFactor": 1,
         "thumbnail": {
             "display": false,
             "height": 110,
             "width": 200
         },
         "popup": {
+            "display": false,
             "displayWord": false,
             "displayCount": false,
             "backgroundColor": "white",
             "fontColor": "black",
             "linkColor": "black",
             "fontSize": "22px",
-            "width": "250px",
-            "padding": {
-                "paddingTop": "8px",
-                "paddingLeft": "30px",
-                "paddingBottom": "8px",
-                "paddingRight": "30px"
-            }
+            "width": "250px"
+        },
+        "highlight": {
+            "display": false
         },
         "box": {
             "position": "absolute",
