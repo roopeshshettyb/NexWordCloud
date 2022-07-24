@@ -5,7 +5,7 @@ Word cloud for React with Hover functionality.
 
 The NexWordCloud uses [wordcloud2.js](https://github.com/timdream/wordcloud2.js) by Tim Dream as a base component.
 
-**Visit the [Sandbox](https://codesandbox.io/s/nexwordcloud-cx4044) and check it out**
+**View the [demo](https://nex-word-cloud.vercel.app/)**
 
 ## Installation
 
@@ -14,15 +14,15 @@ The NexWordCloud uses [wordcloud2.js](https://github.com/timdream/wordcloud2.js)
 
 # Options
 
-    - A query parameter 'input' can be passed in the url which contains the file name of the json file which is located in ./public folder.
+- A query parameter 'input' can be passed in the url which contains the file name of the json file which is located in ./public folder.
 
-    - A query parameter 'thumbnail' can be passed in the url which can define if the thumbnail should be displayed or not.
+- A query parameter 'thumbnail' can be passed in the url which can define if the thumbnail should be displayed or not.
 
-    - Cloud width and height can be edited in the json to suit your use case.
+- Cloud width and height can be edited in the json to suit your use case.
 
-    - A weight factor can also be edited in the json to increase/reduce the size of the words.
+- A weight factor can also be edited in the json to increase/reduce the size of the words.
 
-    - Clicked word is highlighted by a simple rectangular box around the word.
+- Clicked word is highlighted by a simple rectangular box around the word.
 
-    - /upload page is added where you can upload a CSV using the template defined in "./public/Template.csv" to generate a JSON with default styling.
+- /upload page is added where you can upload a CSV using the template defined in "./public/Template.csv" to generate a JSON with default styling.
 
