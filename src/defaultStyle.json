@@ -21,6 +21,7 @@
             "linkColor": "black",
             "fontSize": "22px",
             "width": "250px",
+            "maxHeight": "400px",
             "widthOffset": 250
         },
         "highlight": {
