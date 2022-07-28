@@ -180,6 +180,7 @@ export default function App() {
       drawOutOfBound: false,
       click: (item, dimension, event) => {
         event.cancelBubble = true; if (event.stopPropagation) event.stopPropagation();
+        console.log(event)
         popup(item, dimension, event);
       }
     });
@@ -305,7 +306,7 @@ export default function App() {
             ref={componentRef}
             hidden={!pop} sx={{
               top: props.offsetY,
-              left: props.offsetX,
+              left: props.offsetX + (0.9 * styles.popup.widthOffset),
               position: "absolute",
               minWidth: styles.popup.width || "250px",
               zIndex: 1,

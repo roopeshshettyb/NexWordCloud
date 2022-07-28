@@ -19,7 +19,8 @@
             "fontColor": "black",
             "linkColor": "black",
             "fontSize": "22px",
-            "width": "250px"
+            "width": "250px",
+            "widthOffset": 225
         },
         "highlight": {
             "display": false
