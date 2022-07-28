@@ -236,7 +236,8 @@ export default function App() {
                 top: props.y,
                 left: props.x,
                 position: "absolute",
-                minWidth: styles.popup.width || "250px",
+                maxHeight: styles.popup.maxHeight || "400px",
+                minWidth: styles.popup.width || "260px",
                 zIndex: 1,
                 fontSize: styles.popup.fontSize || "22px",
                 fontFamily: styles.fontFamily || "Raleway",
@@ -247,6 +248,8 @@ export default function App() {
                 transitionTimingFunction: "ease",
                 transition: "height 0.3s",
                 py: 1.5,
+                overflow: "hidden",
+                overflowY: "scroll",
               }}
               onMouseLeave={() => { popup() }}
             >
@@ -309,6 +312,7 @@ export default function App() {
               left: props.offsetX + (0.9 * styles.popup.widthOffset),
               position: "absolute",
               minWidth: styles.popup.width || "250px",
+              maxHeight: styles.popup.maxHeight || "300px",
               zIndex: 1,
               fontSize: styles.popup.fontSize || "22px",
               fontFamily: styles.fontFamily || "Raleway",
@@ -319,6 +323,8 @@ export default function App() {
               transitionTimingFunction: "ease",
               transition: "height 0.3s",
               py: 1.5,
+              overflow: "hidden",
+              overflowY: "scroll",
             }}
             onMouseLeave={() => { popup() }}
           >

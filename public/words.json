@@ -20,7 +20,8 @@
             "linkColor": "black",
             "fontSize": "22px",
             "width": "250px",
-            "widthOffset": 225
+            "maxHeight": "400px",
+            "widthOffset": 250
         },
         "highlight": {
             "display": false
