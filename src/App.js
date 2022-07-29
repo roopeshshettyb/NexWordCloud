@@ -34,7 +34,7 @@ export default function App() {
   const [word, setWord] = useState("");
   const [props, setProps] = useState([]);
   const [element, setElement] = useState("hello")
-  const [maxWeight, setMaxWeight] = useState(0);
+  // const [maxWeight, setMaxWeight] = useState(0);
   const [open, setOpen] = useState(false);
 
   const canvasHeight = styles.cloudHeight || 900;
@@ -58,7 +58,7 @@ export default function App() {
   if (queryParams.get('thumbnail') !== null) { thumbnailDisplay = (queryParams.get('thumbnail') === 'true') }
 
   function normalise(val, max, min) {
-    return ((val - min) * 250 / (max - min)) + max / min;
+    return ((val - min) * 250 / (max - min)) + (max * 1.1 / min);
   }
 
   // Overwrite Math.random to use seed to ensure same word cloud is printed on every render
@@ -83,7 +83,7 @@ export default function App() {
     return res;
   }
 
-  function getColor(word, weight) {
+  function getColor(word, weight, maxWeight) {
     if (weight >= minWeight && weight < medianOne) {
       return "rgba(0,0,0,0.6)";
     } else if (weight < medianTwo && weight >= medianOne) {
@@ -94,7 +94,7 @@ export default function App() {
     return 'rgba(0,0,0,0.6)'
   }
 
-  function getSize(size, item, final_data) {
+  function getSize(size, item, final_data, maxWeight) {
     let biggest = final_data[0][0].length;
     let max = maxWeight;
     let factor = styles.weightFactor || 1
@@ -158,7 +158,8 @@ export default function App() {
     data.forEach((w) => {
       final_data.push([w.word, w.weight, w.click, w.color, w.weight]);
     });
-    setMaxWeight(Math.max(...data.map((w) => w.weight)));
+    // setMaxWeight(Math.max(...data.map((w) => w.weight)));
+    const maxWeight = Math.max(...data.map((w) => w.weight))
     var listColorCounter = 0;
     Wordcloud(canvasRef.current, {
       list: final_data,
@@ -169,18 +170,17 @@ export default function App() {
       fontFamily: styles.fontFamily || "Raleway",
       backgroundColor: styles.backgroundColor || "White",
       color: (word, weight) => {
-        if (final_data[listColorCounter][3] !== undefined) { return final_data[listColorCounter++][3]; } else { return getColor(word, weight) }
+        if (final_data[listColorCounter][3] !== undefined) { return final_data[listColorCounter++][3]; } else { return getColor(word, weight, maxWeight) }
       },
       rotationSteps: 2,
       rotateRatio: 0.4,
       // weightFactor: (size, item) => { if (size === 250) return Math.pow(size, 1.5); return Math.pow(size, 0.9) },
-      weightFactor: (size, item) => getSize(size, item, final_data),
+      weightFactor: (size, item) => getSize(size, item, final_data, maxWeight),
       shrinkToFit: true,
       minSize: 5,
       drawOutOfBound: false,
       click: (item, dimension, event) => {
         event.cancelBubble = true; if (event.stopPropagation) event.stopPropagation();
-        console.log(event)
         popup(item, dimension, event);
       }
     });
@@ -191,7 +191,7 @@ export default function App() {
     data.forEach((w) => {
       final_data.push([w.word, w.weight, w.click, w.color, w.weight]);
     });
-    setMaxWeight(Math.max(...data.map((w) => w.weight)));
+    const maxWeight = Math.max(...data.map((w) => w.weight))
     var listColorCounter = 0;
     Wordcloud(thumbnailCanvasRef.current, {
       list: final_data,
@@ -202,12 +202,12 @@ export default function App() {
       fontFamily: styles.fontFamily || "Raleway",
       backgroundColor: styles.backgroundColor || "White",
       color: (word, weight) => {
-        if (final_data[listColorCounter][3] !== undefined) { return final_data[listColorCounter++][3]; } else { return getColor(word, weight) }
+        if (final_data[listColorCounter][3] !== undefined) { return final_data[listColorCounter++][3]; } else { return getColor(word, weight, maxWeight) }
       },
       rotationSteps: 2,
       rotateRatio: 0.4,
       fontWeight: function () { return "bold"; },
-      weightFactor: (size, item) => getSize(size, item, final_data),
+      weightFactor: (size, item) => getSize(size, item, final_data, maxWeight),
       shrinkToFit: true,
       minSize: 3,
       drawOutOfBound: false,
@@ -217,7 +217,7 @@ export default function App() {
   useEffect(() => {
     if (thumbnailDisplay === false) { generateCloud() }
     else { generateThumbnail() }
-  }, [maxWeight]);// eslint-disable-line react-hooks/exhaustive-deps
+  }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
 

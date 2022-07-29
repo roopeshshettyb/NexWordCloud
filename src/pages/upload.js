@@ -18,6 +18,8 @@ function Upload() {
         setIsChecked(!isChecked);
     };
 
+    let element = document.getElementById('frame')
+    console.log(element)
 
     const changeHandler = async (event) => {
         // Passing file data (event.target.files[0]) to parse using Papa.parse
@@ -106,8 +108,8 @@ function Upload() {
                 <br />
                 <br />
             </div>
-            <div class="container">
-                {/* <iframe title="cloud" class="responsive-iframe" src="http://localhost:3000?thumbnail=false"></iframe> */}
+            <div className="container">
+                <iframe title="cloud" id="frame" className="responsive-iframe" src="http://localhost:3000?thumbnail=false"></iframe>
             </div>
         </div >
     );
