@@ -16,7 +16,7 @@
             "width": 200
         },
         "popup": {
-            "display": false,
+            "display": true,
             "displayWord": false,
             "displayCount": false,
             "backgroundColor": "white",
@@ -24,7 +24,7 @@
             "linkColor": "black",
             "fontSize": "22px",
             "width": "250px",
-            "minHeight": "400px",
+            "minHeight": "100px",
             "widthOffset": 250
         },
         "highlight": {

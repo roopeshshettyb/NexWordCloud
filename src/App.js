@@ -41,7 +41,7 @@ export default function App() {
   const canvasWidth = styles.cloudWidth || 500;   //edit canvasWidth to make the cloud bigger/smaller
   const count = data.length
   var thumbnailDisplay = styles.thumbnail.display || false
-  const displayPopup = styles.popup.display || true
+  var displayPopup = styles.popup.display || false
   const displayHighlight = styles.highlight.display !== undefined ? styles.highlight.display : false
   const displayWord = styles.popup.displayWord !== undefined ? styles.popup.displayWord : false;
   const displayCount = styles.popup.displayCount !== undefined ? styles.popup.displayCount : false;
@@ -56,7 +56,7 @@ export default function App() {
   data.sort((a, b) => { return b.weight - a.weight });
 
   if (queryParams.get('thumbnail') !== null) { thumbnailDisplay = (queryParams.get('thumbnail') === 'true') }
-
+  if (queryParams.get('popup') !== null) { displayPopup = (queryParams.get('popup') === 'true') }
   function normalise(val, max, min) {
     return ((val - min) * 250 / (max - min)) + (max * 1.1 / min);
   }
@@ -124,6 +124,7 @@ export default function App() {
   function popup(item, dimension, event) {
     try {
       if (displayHighlight) var el = document.getElementById('wordHighlight');
+
       if (item !== undefined) {
         if (displayHighlight) {
           el.removeAttribute('hidden');
@@ -135,11 +136,11 @@ export default function App() {
         //
         setWord(item);
         setElement(item[0])
+        window.top.postMessage({ item, x: event.x, y: event.y }, '*')
         setProps(event);
         setPop(true);
       } else {
         if (displayHighlight) el.setAttribute('hidden', true);
-        componentRef.current.scrollTo(0, 0);
         setPop(false);
         setWord("")
       }
