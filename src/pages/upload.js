@@ -106,6 +106,9 @@ function Upload() {
                 <br />
                 <br />
             </div>
+            <div class="container">
+                {/* <iframe title="cloud" class="responsive-iframe" src="http://localhost:3000?thumbnail=false"></iframe> */}
+            </div>
         </div >
     );
 }

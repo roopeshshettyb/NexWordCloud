@@ -58,7 +58,7 @@ export default function App() {
   if (queryParams.get('thumbnail') !== null) { thumbnailDisplay = (queryParams.get('thumbnail') === 'true') }
 
   function normalise(val, max, min) {
-    return (val - min) * 250 / (max - min);
+    return ((val - min) * 250 / (max - min)) + max / min;
   }
 
   // Overwrite Math.random to use seed to ensure same word cloud is printed on every render
@@ -91,7 +91,7 @@ export default function App() {
     } else if (weight <= maxWeight && weight >= medianTwo) {
       return "rgba(0,0,0,1.0)";
     }
-    return 'red'
+    return 'rgba(0,0,0,0.6)'
   }
 
   function getSize(size, item, final_data) {
@@ -176,7 +176,7 @@ export default function App() {
       // weightFactor: (size, item) => { if (size === 250) return Math.pow(size, 1.5); return Math.pow(size, 0.9) },
       weightFactor: (size, item) => getSize(size, item, final_data),
       shrinkToFit: true,
-      minSize: 3,
+      minSize: 5,
       drawOutOfBound: false,
       click: (item, dimension, event) => {
         event.cancelBubble = true; if (event.stopPropagation) event.stopPropagation();
@@ -236,7 +236,7 @@ export default function App() {
                 top: props.y,
                 left: props.x,
                 position: "absolute",
-                maxHeight: styles.popup.maxHeight || "400px",
+                minHeight: styles.popup.minHeight || "100px",
                 minWidth: styles.popup.width || "260px",
                 zIndex: 1,
                 fontSize: styles.popup.fontSize || "22px",
@@ -248,8 +248,6 @@ export default function App() {
                 transitionTimingFunction: "ease",
                 transition: "height 0.3s",
                 py: 1.5,
-                overflow: "hidden",
-                overflowY: "scroll",
               }}
               onMouseLeave={() => { popup() }}
             >
@@ -279,11 +277,14 @@ export default function App() {
               ))}
             </Box>}
           </div>
-          {styles.caption && (
+          {(styles.cloudTitle || styles.cloudDescription) && (
             <div>
-              <h2 style={{ fontFamily: styles.fontFamily || "Raleway", color: styles.captionColor || "blue", display: 'flex', justifyContent: 'center' }}>
-                {styles.caption}
-              </h2>
+              <h1 style={{ fontFamily: styles.fontFamily || "Raleway", color: styles.titleColor || "blue", display: 'flex', justifyContent: 'center' }}>
+                {styles.cloudTitle}
+              </h1>
+              <h3 style={{ fontFamily: styles.fontFamily || "Raleway", color: styles.descriptionColor || "black", display: 'flex', justifyContent: 'center' }}>
+                {styles.cloudDescription}
+              </h3>
             </div>
           )}
         </div>
@@ -312,7 +313,7 @@ export default function App() {
               left: props.offsetX + (0.9 * styles.popup.widthOffset),
               position: "absolute",
               minWidth: styles.popup.width || "250px",
-              maxHeight: styles.popup.maxHeight || "300px",
+              minHeight: styles.popup.minHeight || "100px",
               zIndex: 1,
               fontSize: styles.popup.fontSize || "22px",
               fontFamily: styles.fontFamily || "Raleway",
@@ -323,8 +324,6 @@ export default function App() {
               transitionTimingFunction: "ease",
               transition: "height 0.3s",
               py: 1.5,
-              overflow: "hidden",
-              overflowY: "scroll",
             }}
             onMouseLeave={() => { popup() }}
           >
@@ -353,11 +352,14 @@ export default function App() {
               ))}
           </Box>}
         </div>
-        {styles.caption && (
+        {(styles.cloudTitle || styles.cloudDescription) && (
           <div>
-            <h2 style={{ fontFamily: styles.fontFamily || "Raleway", color: styles.captionColor || "blue", display: 'flex', justifyContent: 'center' }}>
-              {styles.caption}
-            </h2>
+            <h1 style={{ fontFamily: styles.fontFamily || "Raleway", color: styles.titleColor || "blue", display: 'flex', justifyContent: 'center' }}>
+              {styles.cloudTitle}
+            </h1>
+            <h3 style={{ fontFamily: styles.fontFamily || "Raleway", color: styles.descriptionColor || "black", display: 'flex', justifyContent: 'center' }}>
+              {styles.cloudDescription}
+            </h3>
           </div>
         )}
       </Box>}
