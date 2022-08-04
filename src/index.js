@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from "./App";
 import './App.css'
 import Upload from './pages/upload'
-import Iframe from './pages/iframe'
+import Iframe from './pages/reactIframe'
 
 export default function Home() {
   return (
